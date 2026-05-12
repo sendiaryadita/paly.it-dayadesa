@@ -6,6 +6,7 @@
     <title>DayaDesa - Indeks Desa</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% include "energi/partials/theme_assets.html" %}
 </head>
 
 <body style="background-color: #f4f7f6;">
@@ -20,6 +21,7 @@
             <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">Buat Laporan</a>
             <a href="{% url 'daftar_laporan' %}" class="btn btn-outline-light btn-sm">Daftar Laporan</a>
             <a href="{% url 'tentang' %}" class="btn btn-outline-light btn-sm">Tentang</a>
+            {% include "energi/partials/theme_toggle.html" %}
         </div>
     </div>
 </nav>
@@ -198,6 +200,8 @@
 
     filterDesa();
 </script>
+
+{% include "energi/partials/theme_script.html" %}
 
 </body>
 </html>

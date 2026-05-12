@@ -68,6 +68,7 @@
             font-weight: bold;
         }
     </style>
+    {% include "energi/partials/theme_assets.html" %}
 </head>
 
 <body>
@@ -92,6 +93,7 @@
             <a href="{% url 'tentang' %}" class="btn btn-outline-light btn-sm">
                 Tentang
             </a>
+            {% include "energi/partials/theme_toggle.html" %}
         </div>
     </div>
 </nav>
@@ -374,6 +376,8 @@
         }
     });
 </script>
+
+{% include "energi/partials/theme_script.html" %}
 
 </body>
 </html>
