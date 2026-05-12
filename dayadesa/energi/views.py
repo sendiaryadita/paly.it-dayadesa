@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import Desa
+from .forms import CitizenReportForm
+from .models import CitizenReport, Desa
 
 
 def peta_energi(request):
@@ -29,9 +32,109 @@ def peta_energi(request):
             }
         )
 
+    jumlah_krisis = 0
+    jumlah_transisi = 0
+    jumlah_mandiri = 0
+
+    for desa in desa_list:
+        kategori = desa.kategori_esi()
+
+        if kategori == "Krisis Energi":
+            jumlah_krisis += 1
+        elif kategori == "Transisi Energi":
+            jumlah_transisi += 1
+        else:
+            jumlah_mandiri += 1
+
     context = {
         "desa_data": desa_data,
         "jumlah_desa": desa_list.count(),
+        "jumlah_laporan": CitizenReport.objects.count(),
+        "jumlah_krisis": jumlah_krisis,
+        "jumlah_transisi": jumlah_transisi,
+        "jumlah_mandiri": jumlah_mandiri,
     }
 
     return render(request, "energi/peta.html", context)
+
+
+def indeks_desa(request):
+    q = request.GET.get("q", "").strip()
+    kategori = request.GET.get("kategori", "").strip()
+
+    desa_queryset = Desa.objects.all()
+
+    if q:
+        desa_queryset = desa_queryset.filter(
+            Q(nama_desa__icontains=q)
+            | Q(kecamatan__icontains=q)
+            | Q(kabupaten__icontains=q)
+            | Q(provinsi__icontains=q)
+        )
+
+    desa_list = list(desa_queryset)
+
+    if kategori:
+        desa_list = [
+            desa for desa in desa_list
+            if desa.kategori_esi() == kategori
+        ]
+
+    desa_list = sorted(
+        desa_list,
+        key=lambda desa: desa.esi_score,
+        reverse=True,
+    )
+
+    context = {
+        "desa_list": desa_list,
+        "q": q,
+        "kategori": kategori,
+    }
+
+    return render(request, "energi/indeks_desa.html", context)
+
+
+def detail_desa(request, desa_id):
+    desa = get_object_or_404(Desa, id=desa_id)
+    laporan_list = desa.laporan_warga.all().order_by("-tanggal_laporan")
+
+    context = {
+        "desa": desa,
+        "laporan_list": laporan_list,
+    }
+
+    return render(request, "energi/detail_desa.html", context)
+
+
+def buat_laporan(request):
+    if request.method == "POST":
+        form = CitizenReportForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                "Laporan warga berhasil dikirim dan tersimpan di sistem.",
+            )
+            return redirect("daftar_laporan")
+    else:
+        form = CitizenReportForm()
+
+    context = {
+        "form": form,
+    }
+
+    return render(request, "energi/buat_laporan.html", context)
+
+
+def daftar_laporan(request):
+    laporan_list = CitizenReport.objects.select_related("desa").order_by(
+        "-tanggal_laporan"
+    )
+
+    context = {
+        "laporan_list": laporan_list,
+    }
+
+    return render(request, "energi/daftar_laporan.html", context)

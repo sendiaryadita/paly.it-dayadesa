@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayaDesa - Indeks Desa</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body style="background-color: #f4f7f6;">
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0f766e;">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'peta_energi' %}">DayaDesa</a>
+
+        <div class="d-flex gap-2">
+            <a href="{% url 'peta_energi' %}" class="btn btn-light btn-sm">Peta Energi</a>
+            <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">Buat Laporan</a>
+            <a href="{% url 'daftar_laporan' %}" class="btn btn-outline-light btn-sm">Daftar Laporan</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Indeks Ketahanan Energi Desa</h2>
+        <p class="text-muted">
+            Halaman ini menampilkan skor Energy Security Index (ESI) setiap desa berdasarkan
+            empat pilar utama: ketersediaan, keterjangkauan, keberlanjutan, dan keandalan energi.
+        </p>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
+        <div class="card-body p-4">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-6">
+                    <label class="form-label">Cari Desa atau Lokasi</label>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ q }}"
+                        class="form-control"
+                        placeholder="Contoh: Sukamaju, Natar, Lampung Selatan"
+                    >
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Filter Kategori ESI</label>
+                    <select name="kategori" class="form-select">
+                        <option value="">Semua Kategori</option>
+                        <option value="Krisis Energi" {% if kategori == "Krisis Energi" %}selected{% endif %}>
+                            Krisis Energi
+                        </option>
+                        <option value="Transisi Energi" {% if kategori == "Transisi Energi" %}selected{% endif %}>
+                            Transisi Energi
+                        </option>
+                        <option value="Mandiri Energi" {% if kategori == "Mandiri Energi" %}selected{% endif %}>
+                            Mandiri Energi
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-success">
+                        Terapkan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+        <div class="card-body p-4">
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nama Desa</th>
+                            <th>Lokasi</th>
+                            <th>Skor ESI</th>
+                            <th>Kategori</th>
+                            <th>Ketersediaan</th>
+                            <th>Keterjangkauan</th>
+                            <th>Keberlanjutan</th>
+                            <th>Keandalan</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for desa in desa_list %}
+                            <tr>
+                                <td class="fw-bold">{{ desa.nama_desa }}</td>
+                                <td>
+                                    {{ desa.kecamatan }},
+                                    {{ desa.kabupaten }}
+                                </td>
+                                <td>
+                                    <span class="fw-bold fs-5">
+                                        {{ desa.esi_score|floatformat:2 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if desa.kategori_esi == "Krisis Energi" %}
+                                        <span class="badge bg-danger">Krisis Energi</span>
+                                    {% elif desa.kategori_esi == "Transisi Energi" %}
+                                        <span class="badge bg-warning text-dark">Transisi Energi</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Mandiri Energi</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ desa.ketersediaan_energi }}</td>
+                                <td>{{ desa.keterjangkauan_energi }}</td>
+                                <td>{{ desa.keberlanjutan_energi }}</td>
+                                <td>{{ desa.keandalan_energi }}</td>
+                                <td>
+                                    <a href="{% url 'detail_desa' desa.id %}" class="btn btn-sm btn-success">
+                                        Detail
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted">
+                                    Data desa tidak ditemukan.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

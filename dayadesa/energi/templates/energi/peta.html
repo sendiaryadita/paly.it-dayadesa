@@ -75,7 +75,18 @@
 <nav class="navbar navbar-dark mb-4">
     <div class="container">
         <span class="navbar-brand mb-0 h1">DayaDesa</span>
-        <span class="text-white">Peta Ketahanan Energi Desa</span>
+
+        <div class="d-flex gap-2">
+            <a href="{% url 'indeks_desa' %}" class="btn btn-light btn-sm">
+                Indeks Desa
+            </a>
+            <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">
+                Buat Laporan
+            </a>
+            <a href="{% url 'daftar_laporan' %}" class="btn btn-outline-light btn-sm">
+                Daftar Laporan
+            </a>
+        </div>
     </div>
 </nav>
 
@@ -98,7 +109,15 @@
             </div>
         </div>
 
-        <div class="col-md-8 mb-3">
+        <div class="col-md-4 mb-3">
+            <div class="card stat-card p-3">
+                <h6>Total Laporan Warga</h6>
+                <h3>{{ jumlah_laporan }}</h3>
+                <p class="text-muted mb-0">Laporan yang masuk melalui Citizen Report</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
             <div class="card stat-card p-3">
                 <h6>Keterangan Warna ESI</h6>
                 <div class="d-flex flex-wrap gap-3">
@@ -112,11 +131,20 @@
 
     <div id="map"></div>
 
+    <div class="card stat-card mt-4 p-4">
+        <h5 class="fw-bold mb-3">Ringkasan Kategori ESI</h5>
+        <canvas id="esiChart" height="110"></canvas>
+    </div>
+
 </div>
 
 {{ desa_data|json_script:"desa-data" }}
+{{ jumlah_krisis|json_script:"jumlah-krisis" }}
+{{ jumlah_transisi|json_script:"jumlah-transisi" }}
+{{ jumlah_mandiri|json_script:"jumlah-mandiri" }}
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
     const desaData = JSON.parse(
@@ -157,6 +185,10 @@
                 <div>Keandalan Energi: ${desa.keandalan_energi}</div>
                 <hr>
                 <div><strong>Laporan Warga:</strong> ${desa.jumlah_laporan}</div>
+                <hr>
+                <a href="/desa/${desa.id}/" class="btn btn-sm btn-success">
+                    Lihat Detail Desa
+                </a>
             </div>
         `;
 
@@ -185,6 +217,51 @@
     };
 
     legend.addTo(map);
+
+    const jumlahKrisis = JSON.parse(
+        document.getElementById("jumlah-krisis").textContent
+    );
+
+    const jumlahTransisi = JSON.parse(
+        document.getElementById("jumlah-transisi").textContent
+    );
+
+    const jumlahMandiri = JSON.parse(
+        document.getElementById("jumlah-mandiri").textContent
+    );
+
+    const esiChartElement = document.getElementById("esiChart");
+
+    new Chart(esiChartElement, {
+        type: "bar",
+        data: {
+            labels: ["Krisis Energi", "Transisi Energi", "Mandiri Energi"],
+            datasets: [
+                {
+                    label: "Jumlah Desa",
+                    data: [jumlahKrisis, jumlahTransisi, jumlahMandiri],
+                    backgroundColor: ["#dc3545", "#ffc107", "#198754"],
+                    borderRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
 </script>
 
 </body>
