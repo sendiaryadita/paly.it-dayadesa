@@ -12,20 +12,51 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+from decouple import Config, Csv, RepositoryEnv, undefined
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+_env_repository = RepositoryEnv(BASE_DIR / ".env")
+_decouple_config = Config(_env_repository)
+
+
+def config(option, default=undefined, cast=undefined):
+    if option in _env_repository.data:
+        value = _env_repository.data[option]
+
+        if cast is bool:
+            normalized_value = value.lower()
+
+            if normalized_value in ("1", "true", "yes", "on"):
+                return True
+
+            if normalized_value in ("0", "false", "no", "off"):
+                return False
+
+            raise ValueError("Invalid truth value: " + value)
+
+        if cast is not undefined:
+            return cast(value)
+
+        return value
+
+    return _decouple_config(option, default=default, cast=cast)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-7mnx#8nm=3z3if5l6e!78l__z)6oe#a6%g(8r6w239*2ygq^x+'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS",
+    default="127.0.0.1,localhost",
+    cast=Csv()
+)
 
 
 # Application definition
@@ -72,15 +103,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'dayadesa.wsgi.application'
 
 
-# Blok kode BARU yang harus dimasukkan:
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dayadesa',                # Nama database PostgreSQL Anda
-        'USER': 'postgres',                # User database Anda
-        'PASSWORD': 'admin123', # Masukkan password postgres Anda
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST", default="127.0.0.1"),
+        "PORT": config("DB_PORT", default="5432"),
     }
 }
 

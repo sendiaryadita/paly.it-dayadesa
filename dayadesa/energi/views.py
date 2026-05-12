@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.db.models import Avg, Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CitizenReportForm
@@ -46,13 +47,13 @@ def dashboard(request):
     return render(request, "energi/dashboard.html", context)
 
 
-def peta_energi(request):
+def api_data_desa(request):
     desa_list = Desa.objects.all().order_by("nama_desa")
 
-    desa_data = []
+    data_desa = []
 
     for desa in desa_list:
-        desa_data.append(
+        data_desa.append(
             {
                 "id": desa.id,
                 "nama_desa": desa.nama_desa,
@@ -72,6 +73,18 @@ def peta_energi(request):
             }
         )
 
+    return JsonResponse(
+        {
+            "status": "success",
+            "total_desa": len(data_desa),
+            "data": data_desa,
+        }
+    )
+
+
+def peta_energi(request):
+    desa_list = Desa.objects.all().order_by("nama_desa")
+
     jumlah_krisis = 0
     jumlah_transisi = 0
     jumlah_mandiri = 0
@@ -87,7 +100,6 @@ def peta_energi(request):
             jumlah_mandiri += 1
 
     context = {
-        "desa_data": desa_data,
         "jumlah_desa": desa_list.count(),
         "jumlah_laporan": CitizenReport.objects.count(),
         "jumlah_krisis": jumlah_krisis,
@@ -181,12 +193,36 @@ def buat_laporan(request):
 
 
 def daftar_laporan(request):
+    q = request.GET.get("q", "").strip()
+    kategori = request.GET.get("kategori", "").strip()
+    status = request.GET.get("status", "").strip()
+
     laporan_list = CitizenReport.objects.select_related("desa").order_by(
         "-tanggal_laporan"
     )
 
+    if q:
+        laporan_list = laporan_list.filter(
+            Q(nama_pelapor__icontains=q)
+            | Q(isi_laporan__icontains=q)
+            | Q(desa__nama_desa__icontains=q)
+            | Q(desa__kecamatan__icontains=q)
+            | Q(desa__kabupaten__icontains=q)
+        )
+
+    if kategori:
+        laporan_list = laporan_list.filter(kategori_laporan=kategori)
+
+    if status:
+        laporan_list = laporan_list.filter(status=status)
+
     context = {
         "laporan_list": laporan_list,
+        "q": q,
+        "kategori": kategori,
+        "status": status,
+        "kategori_choices": CitizenReport.KATEGORI_CHOICES,
+        "status_choices": CitizenReport.STATUS_CHOICES,
     }
 
     return render(request, "energi/daftar_laporan.html", context)

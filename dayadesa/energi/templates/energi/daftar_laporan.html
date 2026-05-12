@@ -12,10 +12,12 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0f766e;">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'peta_energi' %}">DayaDesa</a>
+        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">DayaDesa</a>
 
         <div class="d-flex gap-2">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">Dashboard</a>
             <a href="{% url 'peta_energi' %}" class="btn btn-light btn-sm">Peta Energi</a>
+            <a href="{% url 'indeks_desa' %}" class="btn btn-outline-light btn-sm">Indeks Desa</a>
             <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">Buat Laporan</a>
         </div>
     </div>
@@ -38,15 +40,74 @@
         {% endfor %}
     {% endif %}
 
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
+        <div class="card-body p-4">
+            <form method="get" class="row g-3 align-items-end">
+
+                <div class="col-md-4">
+                    <label class="form-label">Cari Laporan</label>
+                    <input
+                        type="text"
+                        name="q"
+                        value="{{ q }}"
+                        class="form-control"
+                        placeholder="Cari desa, pelapor, atau isi laporan"
+                    >
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Kategori</label>
+                    <select name="kategori" class="form-select">
+                        <option value="">Semua Kategori</option>
+
+                        {% for value, label in kategori_choices %}
+                            <option value="{{ value }}" {% if kategori == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="status" class="form-select">
+                        <option value="">Semua Status</option>
+
+                        {% for value, label in status_choices %}
+                            <option value="{{ value }}" {% if status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-success">
+                        Terapkan
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
     {% if laporan_list %}
         <div class="row">
             {% for laporan in laporan_list %}
                 <div class="col-md-6 mb-4">
                     <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
                         <div class="card-body">
+
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="fw-bold mb-0">{{ laporan.desa.nama_desa }}</h5>
-                                <span class="badge bg-success">{{ laporan.status }}</span>
+
+                                {% if laporan.status == "Baru" %}
+                                    <span class="badge bg-primary">{{ laporan.status }}</span>
+                                {% elif laporan.status == "Diproses" %}
+                                    <span class="badge bg-warning text-dark">{{ laporan.status }}</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ laporan.status }}</span>
+                                {% endif %}
                             </div>
 
                             <p class="text-muted mb-2">
@@ -67,9 +128,14 @@
 
                             <hr>
 
-                            <p class="mb-0">
+                            <p>
                                 {{ laporan.isi_laporan }}
                             </p>
+
+                            <a href="{% url 'detail_desa' laporan.desa.id %}" class="btn btn-sm btn-success">
+                                Lihat Desa
+                            </a>
+
                         </div>
                     </div>
                 </div>
@@ -77,7 +143,7 @@
         </div>
     {% else %}
         <div class="alert alert-warning">
-            Belum ada laporan warga yang masuk.
+            Data laporan tidak ditemukan.
         </div>
     {% endif %}
 

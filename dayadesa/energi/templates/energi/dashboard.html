@@ -14,7 +14,7 @@
     <div class="container">
         <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">DayaDesa</a>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
             <a href="{% url 'peta_energi' %}" class="btn btn-light btn-sm">Peta Energi</a>
             <a href="{% url 'indeks_desa' %}" class="btn btn-outline-light btn-sm">Indeks Desa</a>
             <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">Buat Laporan</a>
@@ -117,6 +117,19 @@
         <div class="col-lg-7 mb-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
                 <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Grafik Kategori ESI</h5>
+                    <canvas id="dashboardEsiChart" height="130"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-lg-7 mb-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body p-4">
                     <h5 class="fw-bold mb-3">Desa Prioritas Berdasarkan ESI Terendah</h5>
 
                     {% if desa_prioritas %}
@@ -131,6 +144,7 @@
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
+
                                 <tbody>
                                     {% for desa in desa_prioritas %}
                                         <tr>
@@ -165,6 +179,22 @@
             </div>
         </div>
 
+        <div class="col-lg-5 mb-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Arah Pengembangan Latihan</h5>
+
+                    <ul class="mb-0">
+                        <li>Menambah data desa dummy agar peta lebih hidup.</li>
+                        <li>Merapikan tampilan mobile dan navbar.</li>
+                        <li>Menambahkan fitur edit status laporan dari admin.</li>
+                        <li>Mencoba deployment jika aplikasi sudah stabil.</li>
+                        <li>Mengembangkan GeoJSON jika ingin mewarnai area desa.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="card border-0 shadow-sm" style="border-radius: 18px;">
@@ -176,11 +206,20 @@
                     <div class="border rounded p-3 mb-3 bg-white">
                         <div class="d-flex justify-content-between">
                             <strong>{{ laporan.desa.nama_desa }}</strong>
-                            <span class="badge bg-success">{{ laporan.status }}</span>
+
+                            {% if laporan.status == "Baru" %}
+                                <span class="badge bg-primary">{{ laporan.status }}</span>
+                            {% elif laporan.status == "Diproses" %}
+                                <span class="badge bg-warning text-dark">{{ laporan.status }}</span>
+                            {% else %}
+                                <span class="badge bg-success">{{ laporan.status }}</span>
+                            {% endif %}
                         </div>
+
                         <p class="text-muted mb-1">
                             {{ laporan.nama_pelapor }} • {{ laporan.kategori_laporan }}
                         </p>
+
                         <p class="mb-0">{{ laporan.isi_laporan }}</p>
                     </div>
                 {% endfor %}
@@ -193,6 +232,50 @@
     </div>
 
 </div>
+
+{{ jumlah_krisis|json_script:"jumlah-krisis" }}
+{{ jumlah_transisi|json_script:"jumlah-transisi" }}
+{{ jumlah_mandiri|json_script:"jumlah-mandiri" }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const jumlahKrisis = JSON.parse(
+        document.getElementById("jumlah-krisis").textContent
+    );
+
+    const jumlahTransisi = JSON.parse(
+        document.getElementById("jumlah-transisi").textContent
+    );
+
+    const jumlahMandiri = JSON.parse(
+        document.getElementById("jumlah-mandiri").textContent
+    );
+
+    const chartElement = document.getElementById("dashboardEsiChart");
+
+    new Chart(chartElement, {
+        type: "doughnut",
+        data: {
+            labels: ["Krisis Energi", "Transisi Energi", "Mandiri Energi"],
+            datasets: [
+                {
+                    data: [jumlahKrisis, jumlahTransisi, jumlahMandiri],
+                    backgroundColor: ["#dc3545", "#ffc107", "#198754"],
+                    borderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 </html>
