@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayaDesa - Dashboard</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body style="background-color: #f4f7f6;">
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0f766e;">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">DayaDesa</a>
+
+        <div class="d-flex gap-2">
+            <a href="{% url 'peta_energi' %}" class="btn btn-light btn-sm">Peta Energi</a>
+            <a href="{% url 'indeks_desa' %}" class="btn btn-outline-light btn-sm">Indeks Desa</a>
+            <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">Buat Laporan</a>
+            <a href="{% url 'daftar_laporan' %}" class="btn btn-outline-light btn-sm">Daftar Laporan</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container py-5">
+
+    <div class="p-4 mb-4 text-white" style="background: linear-gradient(135deg, #0f766e, #16a34a); border-radius: 20px;">
+        <h1 class="fw-bold mb-2">Dashboard DayaDesa</h1>
+        <p class="mb-0">
+            Sistem informasi geospasial untuk memetakan ketahanan energi desa,
+            menghitung Energy Security Index, dan menampung laporan warga.
+        </p>
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Desa</h6>
+                    <h2 class="fw-bold">{{ jumlah_desa }}</h2>
+                    <p class="mb-0 text-muted">Desa terpetakan</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Laporan</h6>
+                    <h2 class="fw-bold">{{ jumlah_laporan }}</h2>
+                    <p class="mb-0 text-muted">Citizen Report</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body">
+                    <h6 class="text-muted">Rata-rata ESI</h6>
+                    <h2 class="fw-bold">{{ rata_rata_esi|floatformat:2 }}</h2>
+                    <p class="mb-0 text-muted">Skor ketahanan energi</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body">
+                    <h6 class="text-muted">Desa Krisis</h6>
+                    <h2 class="fw-bold text-danger">{{ jumlah_krisis }}</h2>
+                    <p class="mb-0 text-muted">Prioritas pemantauan</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-lg-5 mb-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Kategori ESI</h5>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Krisis Energi</span>
+                            <strong class="text-danger">{{ jumlah_krisis }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Transisi Energi</span>
+                            <strong class="text-warning">{{ jumlah_transisi }}</strong>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="d-flex justify-content-between">
+                            <span>Mandiri Energi</span>
+                            <strong class="text-success">{{ jumlah_mandiri }}</strong>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <a href="{% url 'peta_energi' %}" class="btn btn-success w-100">
+                        Lihat Peta Energi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7 mb-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3">Desa Prioritas Berdasarkan ESI Terendah</h5>
+
+                    {% if desa_prioritas %}
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Desa</th>
+                                        <th>Lokasi</th>
+                                        <th>ESI</th>
+                                        <th>Kategori</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for desa in desa_prioritas %}
+                                        <tr>
+                                            <td class="fw-bold">{{ desa.nama_desa }}</td>
+                                            <td>{{ desa.kecamatan }}</td>
+                                            <td>{{ desa.esi_score|floatformat:2 }}</td>
+                                            <td>
+                                                {% if desa.kategori_esi == "Krisis Energi" %}
+                                                    <span class="badge bg-danger">Krisis</span>
+                                                {% elif desa.kategori_esi == "Transisi Energi" %}
+                                                    <span class="badge bg-warning text-dark">Transisi</span>
+                                                {% else %}
+                                                    <span class="badge bg-success">Mandiri</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <a href="{% url 'detail_desa' desa.id %}" class="btn btn-sm btn-success">
+                                                    Detail
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning mb-0">
+                            Belum ada data desa.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card border-0 shadow-sm" style="border-radius: 18px;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-3">Laporan Warga Terbaru</h5>
+
+            {% if laporan_list %}
+                {% for laporan in laporan_list %}
+                    <div class="border rounded p-3 mb-3 bg-white">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ laporan.desa.nama_desa }}</strong>
+                            <span class="badge bg-success">{{ laporan.status }}</span>
+                        </div>
+                        <p class="text-muted mb-1">
+                            {{ laporan.nama_pelapor }} • {{ laporan.kategori_laporan }}
+                        </p>
+                        <p class="mb-0">{{ laporan.isi_laporan }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-warning mb-0">
+                    Belum ada laporan warga.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

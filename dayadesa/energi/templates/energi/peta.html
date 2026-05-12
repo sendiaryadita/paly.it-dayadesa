@@ -186,9 +186,14 @@
                 <hr>
                 <div><strong>Laporan Warga:</strong> ${desa.jumlah_laporan}</div>
                 <hr>
-                <a href="/desa/${desa.id}/" class="btn btn-sm btn-success">
-                    Lihat Detail Desa
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="/desa/${desa.id}/" class="btn btn-sm btn-success">
+                        Detail
+                    </a>
+                    <a href="/lapor/?desa=${desa.id}" class="btn btn-sm btn-outline-success">
+                        Laporkan
+                    </a>
+                </div>
             </div>
         `;
 

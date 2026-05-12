@@ -34,6 +34,12 @@
                         akses energi terbatas, biaya energi mahal, atau pemanfaatan energi terbarukan.
                     </p>
 
+                    {% if selected_desa %}
+                        <div class="alert alert-success">
+                            Laporan ini akan diarahkan untuk <strong>{{ selected_desa.nama_desa }}</strong>.
+                        </div>
+                    {% endif %}
+
                     <form method="post">
                         {% csrf_token %}
 

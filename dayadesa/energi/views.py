@@ -1,9 +1,49 @@
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import CitizenReportForm
 from .models import CitizenReport, Desa
+
+
+def dashboard(request):
+    desa_list = Desa.objects.all()
+    laporan_list = CitizenReport.objects.select_related("desa").order_by(
+        "-tanggal_laporan"
+    )[:5]
+
+    jumlah_krisis = 0
+    jumlah_transisi = 0
+    jumlah_mandiri = 0
+
+    for desa in desa_list:
+        kategori = desa.kategori_esi()
+
+        if kategori == "Krisis Energi":
+            jumlah_krisis += 1
+        elif kategori == "Transisi Energi":
+            jumlah_transisi += 1
+        else:
+            jumlah_mandiri += 1
+
+    rata_rata_esi = desa_list.aggregate(
+        rata_rata=Avg("esi_score")
+    )["rata_rata"]
+
+    desa_prioritas = Desa.objects.all().order_by("esi_score")[:5]
+
+    context = {
+        "jumlah_desa": desa_list.count(),
+        "jumlah_laporan": CitizenReport.objects.count(),
+        "jumlah_krisis": jumlah_krisis,
+        "jumlah_transisi": jumlah_transisi,
+        "jumlah_mandiri": jumlah_mandiri,
+        "rata_rata_esi": rata_rata_esi or 0,
+        "desa_prioritas": desa_prioritas,
+        "laporan_list": laporan_list,
+    }
+
+    return render(request, "energi/dashboard.html", context)
 
 
 def peta_energi(request):
@@ -108,6 +148,12 @@ def detail_desa(request, desa_id):
 
 
 def buat_laporan(request):
+    desa_id = request.GET.get("desa")
+    selected_desa = None
+
+    if desa_id:
+        selected_desa = Desa.objects.filter(id=desa_id).first()
+
     if request.method == "POST":
         form = CitizenReportForm(request.POST)
 
@@ -119,10 +165,16 @@ def buat_laporan(request):
             )
             return redirect("daftar_laporan")
     else:
-        form = CitizenReportForm()
+        initial_data = {}
+
+        if selected_desa:
+            initial_data["desa"] = selected_desa
+
+        form = CitizenReportForm(initial=initial_data)
 
     context = {
         "form": form,
+        "selected_desa": selected_desa,
     }
 
     return render(request, "energi/buat_laporan.html", context)

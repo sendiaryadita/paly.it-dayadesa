@@ -24,11 +24,17 @@
 
 <div class="container py-5">
 
-    <div class="mb-4">
-        <h2 class="fw-bold">{{ desa.nama_desa }}</h2>
-        <p class="text-muted mb-0">
-            {{ desa.kecamatan }}, {{ desa.kabupaten }}, {{ desa.provinsi }}
-        </p>
+    <div class="mb-4 d-flex justify-content-between align-items-start">
+        <div>
+            <h2 class="fw-bold">{{ desa.nama_desa }}</h2>
+            <p class="text-muted mb-0">
+                {{ desa.kecamatan }}, {{ desa.kabupaten }}, {{ desa.provinsi }}
+            </p>
+        </div>
+
+        <a href="{% url 'buat_laporan' %}?desa={{ desa.id }}" class="btn btn-success">
+            Laporkan Desa Ini
+        </a>
     </div>
 
     <div class="row mb-4">
