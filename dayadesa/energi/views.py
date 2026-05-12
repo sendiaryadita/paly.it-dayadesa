@@ -47,6 +47,10 @@ def dashboard(request):
     return render(request, "energi/dashboard.html", context)
 
 
+def tentang(request):
+    return render(request, "energi/tentang.html")
+
+
 def api_data_desa(request):
     desa_list = Desa.objects.all().order_by("nama_desa")
 

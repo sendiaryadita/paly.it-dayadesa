@@ -76,7 +76,7 @@
     <div class="container">
         <a href="{% url 'dashboard' %}" class="navbar-brand mb-0 h1">DayaDesa</a>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
             <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">
                 Dashboard
             </a>
@@ -88,6 +88,9 @@
             </a>
             <a href="{% url 'daftar_laporan' %}" class="btn btn-outline-light btn-sm">
                 Daftar Laporan
+            </a>
+            <a href="{% url 'tentang' %}" class="btn btn-outline-light btn-sm">
+                Tentang
             </a>
         </div>
     </div>
@@ -134,6 +137,45 @@
 
     </div>
 
+    <div class="card stat-card p-4 mb-4">
+        <div class="row g-3 align-items-end">
+
+            <div class="col-md-6">
+                <label class="form-label">Cari Desa atau Lokasi</label>
+                <input
+                    type="text"
+                    id="mapSearchInput"
+                    class="form-control"
+                    placeholder="Ketik nama desa, kecamatan, kabupaten, atau provinsi"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Filter Kategori ESI</label>
+                <select id="mapKategoriFilter" class="form-select">
+                    <option value="">Semua Kategori</option>
+                    <option value="Krisis Energi">Krisis Energi</option>
+                    <option value="Transisi Energi">Transisi Energi</option>
+                    <option value="Mandiri Energi">Mandiri Energi</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 d-grid">
+                <button type="button" id="mapResetFilter" class="btn btn-secondary">
+                    Reset
+                </button>
+            </div>
+
+        </div>
+
+        <div class="mt-3">
+            <small class="text-muted">
+                Menampilkan <span id="mapJumlahHasil">0</span> desa pada peta.
+            </small>
+        </div>
+    </div>
+
     <div id="map"></div>
 
     <div class="card stat-card mt-4 p-4">
@@ -159,6 +201,78 @@
     }).addTo(map);
 
     const markerGroup = L.featureGroup();
+    const allMarkers = [];
+
+    const mapSearchInput = document.getElementById("mapSearchInput");
+    const mapKategoriFilter = document.getElementById("mapKategoriFilter");
+    const mapResetFilter = document.getElementById("mapResetFilter");
+    const mapJumlahHasil = document.getElementById("mapJumlahHasil");
+
+    function buatPopupDesa(desa) {
+        return `
+            <div>
+                <div class="popup-title">${desa.nama_desa}</div>
+                <div>${desa.kecamatan}, ${desa.kabupaten}</div>
+                <hr>
+                <div>Skor ESI:</div>
+                <div class="esi-score">${desa.esi_score}</div>
+                <div><strong>Kategori:</strong> ${desa.kategori_esi}</div>
+                <hr>
+                <div><strong>4 Pilar ESI</strong></div>
+                <div>Ketersediaan Energi: ${desa.ketersediaan_energi}</div>
+                <div>Keterjangkauan Energi: ${desa.keterjangkauan_energi}</div>
+                <div>Keberlanjutan Energi: ${desa.keberlanjutan_energi}</div>
+                <div>Keandalan Energi: ${desa.keandalan_energi}</div>
+                <hr>
+                <div><strong>Laporan Warga:</strong> ${desa.jumlah_laporan}</div>
+                <hr>
+                <div class="d-flex gap-2">
+                    <a href="/desa/${desa.id}/" class="btn btn-sm btn-success">
+                        Detail
+                    </a>
+                    <a href="/lapor/?desa=${desa.id}" class="btn btn-sm btn-outline-success">
+                        Laporkan
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
+    function tampilkanMarkerSesuaiFilter() {
+        const keyword = mapSearchInput.value.toLowerCase().trim();
+        const kategori = mapKategoriFilter.value;
+        let totalTampil = 0;
+
+        markerGroup.clearLayers();
+
+        allMarkers.forEach(function (item) {
+            const desa = item.desa;
+            const marker = item.marker;
+
+            const searchText = `
+                ${desa.nama_desa}
+                ${desa.kecamatan}
+                ${desa.kabupaten}
+                ${desa.provinsi}
+            `.toLowerCase();
+
+            const cocokKeyword = searchText.includes(keyword);
+            const cocokKategori = kategori === "" || desa.kategori_esi === kategori;
+
+            if (cocokKeyword && cocokKategori) {
+                markerGroup.addLayer(marker);
+                totalTampil += 1;
+            }
+        });
+
+        mapJumlahHasil.textContent = totalTampil;
+
+        if (totalTampil > 0) {
+            map.fitBounds(markerGroup.getBounds(), {
+                padding: [40, 40]
+            });
+        }
+    }
 
     fetch("/api/desa/")
         .then(function (response) {
@@ -176,48 +290,29 @@
                     weight: 2
                 });
 
-                const popupContent = `
-                    <div>
-                        <div class="popup-title">${desa.nama_desa}</div>
-                        <div>${desa.kecamatan}, ${desa.kabupaten}</div>
-                        <hr>
-                        <div>Skor ESI:</div>
-                        <div class="esi-score">${desa.esi_score}</div>
-                        <div><strong>Kategori:</strong> ${desa.kategori_esi}</div>
-                        <hr>
-                        <div><strong>4 Pilar ESI</strong></div>
-                        <div>Ketersediaan Energi: ${desa.ketersediaan_energi}</div>
-                        <div>Keterjangkauan Energi: ${desa.keterjangkauan_energi}</div>
-                        <div>Keberlanjutan Energi: ${desa.keberlanjutan_energi}</div>
-                        <div>Keandalan Energi: ${desa.keandalan_energi}</div>
-                        <hr>
-                        <div><strong>Laporan Warga:</strong> ${desa.jumlah_laporan}</div>
-                        <hr>
-                        <div class="d-flex gap-2">
-                            <a href="/desa/${desa.id}/" class="btn btn-sm btn-success">
-                                Detail
-                            </a>
-                            <a href="/lapor/?desa=${desa.id}" class="btn btn-sm btn-outline-success">
-                                Laporkan
-                            </a>
-                        </div>
-                    </div>
-                `;
+                marker.bindPopup(buatPopupDesa(desa));
 
-                marker.bindPopup(popupContent);
-                marker.addTo(map);
-                markerGroup.addLayer(marker);
+                allMarkers.push({
+                    desa: desa,
+                    marker: marker
+                });
             });
 
-            if (desaData.length > 0) {
-                map.fitBounds(markerGroup.getBounds(), {
-                    padding: [40, 40]
-                });
-            }
+            markerGroup.addTo(map);
+            tampilkanMarkerSesuaiFilter();
         })
         .catch(function (error) {
             console.error("Gagal mengambil data desa:", error);
         });
+
+    mapSearchInput.addEventListener("input", tampilkanMarkerSesuaiFilter);
+    mapKategoriFilter.addEventListener("change", tampilkanMarkerSesuaiFilter);
+
+    mapResetFilter.addEventListener("click", function () {
+        mapSearchInput.value = "";
+        mapKategoriFilter.value = "";
+        tampilkanMarkerSesuaiFilter();
+    });
 
     const legend = L.control({ position: "bottomright" });
 

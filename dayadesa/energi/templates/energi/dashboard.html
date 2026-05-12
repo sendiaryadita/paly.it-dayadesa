@@ -19,6 +19,7 @@
             <a href="{% url 'indeks_desa' %}" class="btn btn-outline-light btn-sm">Indeks Desa</a>
             <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">Buat Laporan</a>
             <a href="{% url 'daftar_laporan' %}" class="btn btn-outline-light btn-sm">Daftar Laporan</a>
+            <a href="{% url 'tentang' %}" class="btn btn-outline-light btn-sm">Tentang</a>
         </div>
     </div>
 </nav>
@@ -29,7 +30,7 @@
         <h1 class="fw-bold mb-2">Dashboard DayaDesa</h1>
         <p class="mb-0">
             Sistem informasi geospasial untuk memetakan ketahanan energi desa,
-            menghitung Energy Security Index, dan menampung laporan warga.
+            menghitung Energy Security Index, dan menampung laporan warga secara partisipatif.
         </p>
     </div>
 
@@ -82,7 +83,7 @@
         <div class="col-lg-5 mb-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">Kategori ESI</h5>
+                    <h5 class="fw-bold mb-3">Kategori Ketahanan Energi</h5>
 
                     <div class="mb-3">
                         <div class="d-flex justify-content-between">
@@ -182,15 +183,31 @@
         <div class="col-lg-5 mb-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
                 <div class="card-body p-4">
-                    <h5 class="fw-bold mb-3">Arah Pengembangan Latihan</h5>
+                    <h5 class="fw-bold mb-3">Rekomendasi Aksi Energi</h5>
 
-                    <ul class="mb-0">
-                        <li>Menambah data desa dummy agar peta lebih hidup.</li>
-                        <li>Merapikan tampilan mobile dan navbar.</li>
-                        <li>Menambahkan fitur edit status laporan dari admin.</li>
-                        <li>Mencoba deployment jika aplikasi sudah stabil.</li>
-                        <li>Mengembangkan GeoJSON jika ingin mewarnai area desa.</li>
-                    </ul>
+                    <div class="mb-3">
+                        <strong class="text-danger">Desa Krisis Energi</strong>
+                        <p class="text-muted mb-0">
+                            Perlu prioritas pemantauan, peningkatan akses listrik stabil,
+                            dan identifikasi kebutuhan energi dasar.
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <strong class="text-warning">Desa Transisi Energi</strong>
+                        <p class="text-muted mb-0">
+                            Dapat diarahkan pada peningkatan keandalan pasokan serta pemanfaatan
+                            energi terbarukan skala desa.
+                        </p>
+                    </div>
+
+                    <div>
+                        <strong class="text-success">Desa Mandiri Energi</strong>
+                        <p class="text-muted mb-0">
+                            Dapat menjadi contoh penerapan energi berkelanjutan dan praktik baik
+                            bagi desa lain.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>

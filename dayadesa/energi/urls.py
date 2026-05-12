@@ -11,4 +11,5 @@ urlpatterns = [
     path("desa/<int:desa_id>/", views.detail_desa, name="detail_desa"),
     path("lapor/", views.buat_laporan, name="buat_laporan"),
     path("laporan/", views.daftar_laporan, name="daftar_laporan"),
+    path("tentang/", views.tentang, name="tentang"),
 ]

@@ -12,12 +12,14 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0f766e;">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'peta_energi' %}">DayaDesa</a>
+        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">DayaDesa</a>
 
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">Dashboard</a>
             <a href="{% url 'peta_energi' %}" class="btn btn-light btn-sm">Peta Energi</a>
             <a href="{% url 'buat_laporan' %}" class="btn btn-outline-light btn-sm">Buat Laporan</a>
             <a href="{% url 'daftar_laporan' %}" class="btn btn-outline-light btn-sm">Daftar Laporan</a>
+            <a href="{% url 'tentang' %}" class="btn btn-outline-light btn-sm">Tentang</a>
         </div>
     </div>
 </nav>
@@ -34,40 +36,42 @@
 
     <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
         <div class="card-body p-4">
-            <form method="get" class="row g-3 align-items-end">
+            <div class="row g-3 align-items-end">
+
                 <div class="col-md-6">
                     <label class="form-label">Cari Desa atau Lokasi</label>
                     <input
                         type="text"
-                        name="q"
-                        value="{{ q }}"
+                        id="searchInput"
                         class="form-control"
-                        placeholder="Contoh: Sukamaju, Natar, Lampung Selatan"
+                        placeholder="Ketik nama desa, kecamatan, kabupaten, atau provinsi"
+                        autocomplete="off"
                     >
                 </div>
 
                 <div class="col-md-4">
                     <label class="form-label">Filter Kategori ESI</label>
-                    <select name="kategori" class="form-select">
+                    <select id="kategoriFilter" class="form-select">
                         <option value="">Semua Kategori</option>
-                        <option value="Krisis Energi" {% if kategori == "Krisis Energi" %}selected{% endif %}>
-                            Krisis Energi
-                        </option>
-                        <option value="Transisi Energi" {% if kategori == "Transisi Energi" %}selected{% endif %}>
-                            Transisi Energi
-                        </option>
-                        <option value="Mandiri Energi" {% if kategori == "Mandiri Energi" %}selected{% endif %}>
-                            Mandiri Energi
-                        </option>
+                        <option value="Krisis Energi">Krisis Energi</option>
+                        <option value="Transisi Energi">Transisi Energi</option>
+                        <option value="Mandiri Energi">Mandiri Energi</option>
                     </select>
                 </div>
 
                 <div class="col-md-2 d-grid">
-                    <button type="submit" class="btn btn-success">
-                        Terapkan
+                    <button type="button" id="resetFilter" class="btn btn-secondary">
+                        Reset
                     </button>
                 </div>
-            </form>
+
+            </div>
+
+            <div class="mt-3">
+                <small class="text-muted">
+                    Menampilkan <span id="jumlahHasil">0</span> desa.
+                </small>
+            </div>
         </div>
     </div>
 
@@ -90,9 +94,13 @@
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody id="desaTableBody">
                         {% for desa in desa_list %}
-                            <tr>
+                            <tr
+                                class="desa-row"
+                                data-search="{{ desa.nama_desa }} {{ desa.kecamatan }} {{ desa.kabupaten }} {{ desa.provinsi }}"
+                                data-kategori="{{ desa.kategori_esi }}"
+                            >
                                 <td class="fw-bold">{{ desa.nama_desa }}</td>
                                 <td>
                                     {{ desa.kecamatan }},
@@ -125,7 +133,7 @@
                         {% empty %}
                             <tr>
                                 <td colspan="9" class="text-center text-muted">
-                                    Data desa tidak ditemukan.
+                                    Belum ada data desa.
                                 </td>
                             </tr>
                         {% endfor %}
@@ -133,10 +141,63 @@
                 </table>
             </div>
 
+            <div id="emptyMessage" class="alert alert-warning d-none">
+                Data desa tidak ditemukan.
+            </div>
+
         </div>
     </div>
 
 </div>
+
+<script>
+    const searchInput = document.getElementById("searchInput");
+    const kategoriFilter = document.getElementById("kategoriFilter");
+    const resetFilter = document.getElementById("resetFilter");
+    const jumlahHasil = document.getElementById("jumlahHasil");
+    const emptyMessage = document.getElementById("emptyMessage");
+    const desaRows = document.querySelectorAll(".desa-row");
+
+    function filterDesa() {
+        const keyword = searchInput.value.toLowerCase().trim();
+        const kategori = kategoriFilter.value;
+        let totalTampil = 0;
+
+        desaRows.forEach(function (row) {
+            const searchText = row.dataset.search.toLowerCase();
+            const rowKategori = row.dataset.kategori;
+
+            const cocokKeyword = searchText.includes(keyword);
+            const cocokKategori = kategori === "" || rowKategori === kategori;
+
+            if (cocokKeyword && cocokKategori) {
+                row.style.display = "";
+                totalTampil += 1;
+            } else {
+                row.style.display = "none";
+            }
+        });
+
+        jumlahHasil.textContent = totalTampil;
+
+        if (totalTampil === 0) {
+            emptyMessage.classList.remove("d-none");
+        } else {
+            emptyMessage.classList.add("d-none");
+        }
+    }
+
+    searchInput.addEventListener("input", filterDesa);
+    kategoriFilter.addEventListener("change", filterDesa);
+
+    resetFilter.addEventListener("click", function () {
+        searchInput.value = "";
+        kategoriFilter.value = "";
+        filterDesa();
+    });
+
+    filterDesa();
+</script>
 
 </body>
 </html>
