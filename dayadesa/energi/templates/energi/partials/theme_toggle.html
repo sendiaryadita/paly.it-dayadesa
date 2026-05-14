@@ -1,15 +1,35 @@
 <button
-    type="button"
-    class="btn btn-outline-light btn-sm theme-toggle"
-    data-theme-toggle
-    aria-label="Ganti mode gelap dan terang"
-    title="Ganti mode gelap dan terang"
+  type="button"
+  class="relative w-9 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-teal-900/40 transition-all duration-200"
+  data-theme-toggle
+  aria-label="Ganti mode gelap dan terang"
+  title="Ganti mode"
 >
-    <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2"></circle>
-        <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93 6.34 6.34M17.66 17.66l1.41 1.41M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
-    </svg>
-    <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M21 14.6A7.8 7.8 0 0 1 9.4 3a8.7 8.7 0 1 0 11.6 11.6Z" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path>
-    </svg>
+  <!-- Icon Sun (mode terang) -->
+  <svg
+    class="absolute w-4 h-4 transition-all duration-300 rotate-0 scale-100 dark:rotate-90 dark:scale-0"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <circle cx="12" cy="12" r="4"></circle>
+    <path
+      d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93 6.34 6.34M17.66 17.66l1.41 1.41M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41"
+    ></path>
+  </svg>
+  <!-- Icon Moon (mode gelap) -->
+  <svg
+    class="absolute w-4 h-4 transition-all duration-300 rotate-90 scale-0 dark:rotate-0 dark:scale-100"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M21 14.6A7.8 7.8 0 0 1 9.4 3a8.7 8.7 0 1 0 11.6 11.6Z"></path>
+  </svg>
 </button>

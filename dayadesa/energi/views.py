@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.db.models import Avg, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 from .forms import CitizenReportForm
 from .models import CitizenReport, Desa
@@ -230,3 +232,37 @@ def daftar_laporan(request):
     }
 
     return render(request, "energi/daftar_laporan.html", context)
+
+def login_anggota(request):
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+
+        if form.is_valid():
+            login(request, form.get_user())
+            messages.success(request, "Login berhasil.")
+            return redirect("dashboard")
+    else:
+        form = AuthenticationForm()
+
+    return render(request, "energi/login.html", {"form": form})
+
+
+def daftar_anggota(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Akun berhasil dibuat.")
+            return redirect("dashboard")
+    else:
+        form = UserCreationForm()
+
+    return render(request, "energi/daftar_anggota.html", {"form": form})
+
+
+def logout_anggota(request):
+    logout(request)
+    messages.success(request, "Berhasil logout.")
+    return redirect("dashboard")

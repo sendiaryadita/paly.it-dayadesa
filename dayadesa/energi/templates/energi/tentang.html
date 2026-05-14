@@ -1,133 +1,40 @@
-{% extends "energi/base.html" %}
-
-{% block title %}DayaDesa - Tentang Sistem{% endblock %}
-
-{% block content %}
-<div class="container py-5">
-
-    <div class="p-4 mb-4 text-white" style="background: linear-gradient(135deg, #0f766e, #16a34a); border-radius: 20px;">
-        <h1 class="fw-bold mb-2">Tentang DayaDesa</h1>
-        <p class="mb-0">
-            Platform informasi geospasial untuk membantu memahami kondisi ketahanan energi desa
-            melalui peta, indeks energi, dan laporan warga.
+<!-- FILE: templates/energi/tentang.html -->
+{% extends "energi/base.html" %} {% block content %}
+<div class="container mx-auto px-4 py-12 max-w-5xl">
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h1 class="text-3xl font-bold text-teal-800">🌱 Tentang DayaDesa</h1>
+    <p class="mt-2">
+      Platform geospasial ketahanan energi desa berbasis partisipasi warga.
+    </p>
+    <div class="grid md:grid-cols-2 gap-5 mt-6">
+      <div>
+        <h3 class="font-bold text-lg">Apa itu DayaDesa?</h3>
+        <p>
+          Sistem informasi visualisasi ESI (Energy Security Index) dengan 4
+          pilar: Ketersediaan, Keterjangkauan, Keberlanjutan, Keandalan.
         </p>
+      </div>
+      <div>
+        <h3 class="font-bold text-lg">Manfaat</h3>
+        <ul class="list-disc pl-5">
+          <li>Pemetaan kondisi energi desa</li>
+          <li>Laporan warga realtime</li>
+          <li>Rekomendasi kebijakan</li>
+        </ul>
+      </div>
     </div>
-
-    <div class="row">
-
-        <div class="col-lg-7 mb-4">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
-                <div class="card-body p-4">
-                    <h4 class="fw-bold mb-3">Apa itu DayaDesa?</h4>
-
-                    <p>
-                        DayaDesa adalah sistem informasi berbasis web yang dirancang untuk
-                        memvisualisasikan kondisi ketahanan energi desa. Sistem ini menampilkan
-                        data desa dalam bentuk peta interaktif, menghitung skor Energy Security Index,
-                        serta menyediakan fitur Citizen Report untuk menampung laporan warga.
-                    </p>
-
-                    <p>
-                        Melalui sistem ini, kondisi energi setiap desa dapat dipahami secara lebih mudah
-                        karena disajikan dalam bentuk warna, skor, grafik, dan laporan berbasis data.
-                    </p>
-
-                    <h5 class="fw-bold mt-4">Fokus Utama Sistem</h5>
-
-                    <ul>
-                        <li>Pemetaan desa berdasarkan kondisi ketahanan energi.</li>
-                        <li>Perhitungan Energy Security Index berdasarkan 4 pilar.</li>
-                        <li>Pengumpulan laporan warga melalui fitur Citizen Report.</li>
-                        <li>Penyajian ringkasan data dalam dashboard dan grafik.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-5 mb-4">
-            <div class="card border-0 shadow-sm h-100" style="border-radius: 18px;">
-                <div class="card-body p-4">
-                    <h4 class="fw-bold mb-3">4 Pilar ESI</h4>
-
-                    <div class="mb-3">
-                        <strong>Ketersediaan Energi</strong>
-                        <p class="text-muted mb-0">
-                            Mengukur sejauh mana energi tersedia dan dapat diakses oleh desa.
-                        </p>
-                    </div>
-
-                    <div class="mb-3">
-                        <strong>Keterjangkauan Energi</strong>
-                        <p class="text-muted mb-0">
-                            Mengukur kemampuan masyarakat dalam menjangkau biaya energi.
-                        </p>
-                    </div>
-
-                    <div class="mb-3">
-                        <strong>Keberlanjutan Energi</strong>
-                        <p class="text-muted mb-0">
-                            Mengukur potensi atau pemanfaatan energi yang lebih ramah lingkungan.
-                        </p>
-                    </div>
-
-                    <div>
-                        <strong>Keandalan Energi</strong>
-                        <p class="text-muted mb-0">
-                            Mengukur kestabilan pasokan energi dan tingkat gangguan yang terjadi.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
+    <div class="mt-8 bg-emerald-50 p-5 rounded-xl">
+      <h3 class="font-bold">Alur Kerja</h3>
+      <div class="flex flex-wrap gap-4 justify-between mt-3">
+        <div class="text-center">1. Input Data Desa</div>
+        <div>→</div>
+        <div>2. Hitung ESI</div>
+        <div>→</div>
+        <div>3. Peta & Indeks</div>
+        <div>→</div>
+        <div>4. Citizen Report</div>
+      </div>
     </div>
-
-    <div class="card border-0 shadow-sm" style="border-radius: 18px;">
-        <div class="card-body p-4">
-            <h4 class="fw-bold mb-3">Alur Kerja Sistem</h4>
-
-            <div class="row text-center">
-
-                <div class="col-md-3 mb-3">
-                    <div class="p-3 bg-white border rounded h-100">
-                        <h6 class="fw-bold">1. Input Data Desa</h6>
-                        <p class="text-muted mb-0">
-                            Sistem menyimpan nama desa, lokasi, dan nilai indikator energi.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-3 mb-3">
-                    <div class="p-3 bg-white border rounded h-100">
-                        <h6 class="fw-bold">2. Hitung ESI</h6>
-                        <p class="text-muted mb-0">
-                            Sistem menghitung skor berdasarkan ketersediaan, keterjangkauan,
-                            keberlanjutan, dan keandalan.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-3 mb-3">
-                    <div class="p-3 bg-white border rounded h-100">
-                        <h6 class="fw-bold">3. Visualisasi Peta</h6>
-                        <p class="text-muted mb-0">
-                            Desa ditampilkan dalam peta dengan warna sesuai kategori ESI.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="col-md-3 mb-3">
-                    <div class="p-3 bg-white border rounded h-100">
-                        <h6 class="fw-bold">4. Citizen Report</h6>
-                        <p class="text-muted mb-0">
-                            Warga dapat mengirim laporan kondisi energi desa secara langsung.
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
+  </div>
 </div>
 {% endblock %}

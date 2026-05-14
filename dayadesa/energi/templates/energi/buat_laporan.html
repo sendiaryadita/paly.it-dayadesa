@@ -1,67 +1,56 @@
-{% extends "energi/base.html" %}
-
-{% block title %}DayaDesa - Citizen Report{% endblock %}
-
-{% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-
-            <div class="card border-0 shadow-sm" style="border-radius: 18px;">
-                <div class="card-body p-4">
-
-                    <h2 class="fw-bold mb-2">Citizen Report</h2>
-                    <p class="text-muted mb-4">
-                        Gunakan form ini untuk melaporkan kondisi energi di desa, seperti gangguan listrik,
-                        akses energi terbatas, biaya energi mahal, atau pemanfaatan energi terbarukan.
-                    </p>
-
-                    {% if selected_desa %}
-                        <div class="alert alert-success">
-                            Laporan ini akan diarahkan untuk <strong>{{ selected_desa.nama_desa }}</strong>.
-                        </div>
-                    {% endif %}
-
-                    <form method="post">
-                        {% csrf_token %}
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.desa.label }}</label>
-                            {{ form.desa }}
-                            {{ form.desa.errors }}
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.nama_pelapor.label }}</label>
-                            {{ form.nama_pelapor }}
-                            {{ form.nama_pelapor.errors }}
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">{{ form.kategori_laporan.label }}</label>
-                            {{ form.kategori_laporan }}
-                            {{ form.kategori_laporan.errors }}
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label">{{ form.isi_laporan.label }}</label>
-                            {{ form.isi_laporan }}
-                            {{ form.isi_laporan.errors }}
-                        </div>
-
-                        <button type="submit" class="btn btn-success">
-                            Kirim Laporan
-                        </button>
-
-                        <a href="{% url 'peta_energi' %}" class="btn btn-secondary">
-                            Kembali ke Peta
-                        </a>
-                    </form>
-
-                </div>
-            </div>
-
-        </div>
+<!-- FILE: templates/energi/buat_laporan.html -->
+{% extends "energi/base.html" %} {% block title %}Buat Laporan • DayaDesa
+{%endblock %} {% block content %}
+<div class="container mx-auto px-4 py-12 max-w-3xl">
+  <div
+    class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden transition-all duration-300"
+  >
+    <div class="bg-gradient-to-r from-teal-50 to-white p-6 border-b">
+      <h2 class="text-2xl font-bold text-teal-800">Citizen Report</h2>
+      <p class="text-slate-500">Laporkan kondisi energi desa Anda</p>
     </div>
+    <div class="p-6 md:p-8">
+      {% if selected_desa %}
+      <div
+        class="bg-emerald-50 text-emerald-800 p-4 rounded-xl mb-5 text-sm font-medium"
+      >
+        Laporan akan diarahkan ke <strong>{{ selected_desa.nama_desa }}</strong>
+      </div>
+      {% endif %}
+      <form method="post" class="space-y-5">
+        {% csrf_token %}
+        <div>
+          <label class="block font-semibold mb-1">{{ form.desa.label }}</label
+          >{{ form.desa }}{{ form.desa.errors }}
+        </div>
+        <div>
+          <label class="block font-semibold"
+            >{{ form.nama_pelapor.label }}</label
+          >{{ form.nama_pelapor }}{{ form.nama_pelapor.errors }}
+        </div>
+        <div>
+          <label class="block font-semibold"
+            >{{ form.kategori_laporan.label }}</label
+          >{{ form.kategori_laporan }}{{ form.kategori_laporan.errors }}
+        </div>
+        <div>
+          <label class="block font-semibold">{{ form.isi_laporan.label }}</label
+          >{{ form.isi_laporan }}{{ form.isi_laporan.errors }}
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button
+            type="submit"
+            class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-xl transition shadow"
+          >
+            Kirim Laporan</button
+          ><a
+            href="{% url 'peta_energi' %}"
+            class="border border-slate-300 px-5 py-2 rounded-xl hover:bg-slate-50"
+            >Kembali</a
+          >
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -12,4 +12,7 @@ urlpatterns = [
     path("lapor/", views.buat_laporan, name="buat_laporan"),
     path("laporan/", views.daftar_laporan, name="daftar_laporan"),
     path("tentang/", views.tentang, name="tentang"),
+    path("login/", views.login_anggota, name="login_anggota"),
+    path("daftar/", views.daftar_anggota, name="daftar_anggota"),
+    path("logout/", views.logout_anggota, name="logout_anggota"),
 ]

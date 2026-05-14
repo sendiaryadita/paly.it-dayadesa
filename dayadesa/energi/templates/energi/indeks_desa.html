@@ -1,182 +1,130 @@
-{% extends "energi/base.html" %}
-
-{% block title %}DayaDesa - Indeks Desa{% endblock %}
-
-{% block content %}
-<div class="container py-5">
-
-    <div class="mb-4">
-        <h2 class="fw-bold">Indeks Ketahanan Energi Desa</h2>
-        <p class="text-muted">
-            Halaman ini menampilkan skor Energy Security Index (ESI) setiap desa berdasarkan
-            empat pilar utama: ketersediaan, keterjangkauan, keberlanjutan, dan keandalan energi.
-        </p>
+{% extends "energi/base.html" %} {% block title %}DayaDesa - Indeks
+Desa{%endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
+      📊 Indeks Ketahanan Energi Desa
+    </h2>
+    <p class="text-slate-500 dark:text-slate-400">
+      Skor ESI berdasarkan 4 pilar
+    </p>
+  </div>
+  <div
+    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm p-5 mb-8 flex flex-wrap gap-4"
+  >
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari desa / kecamatan"
+      class="flex-1 border border-emerald-200 dark:border-slate-600 rounded-xl p-2"
+    />
+    <select
+      id="kategoriFilter"
+      class="border border-emerald-200 dark:border-slate-600 rounded-xl p-2"
+    >
+      <option value="">Semua Kategori</option>
+      <option value="Krisis Energi">Krisis</option>
+      <option value="Transisi Energi">Transisi</option>
+      <option value="Mandiri Energi">Mandiri</option>
+    </select>
+    <button
+      id="resetFilter"
+      class="bg-slate-200 dark:bg-slate-700 px-5 rounded-xl"
+    >
+      Reset
+    </button>
+  </div>
+  <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow">
+    <div class="overflow-x-auto">
+      <table class="min-w-full text-sm">
+        <thead class="bg-emerald-50 dark:bg-slate-700">
+          <tr>
+            <th class="p-3">Desa</th>
+            <th>Lokasi</th>
+            <th>ESI</th>
+            <th>Kategori</th>
+            <th>Ketersediaan</th>
+            <th>Keterjangkauan</th>
+            <th>Keberlanjutan</th>
+            <th>Keandalan</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="desaTableBody">
+          {% for desa in desa_list %}
+          <tr
+            class="desa-row border-b"
+            data-search="{{ desa.nama_desa }} {{ desa.kecamatan }} {{ desa.kabupaten }}"
+            data-kategori="{{ desa.kategori_esi }}"
+          >
+            <td class="p-3 font-semibold">{{ desa.nama_desa }}</td>
+            <td>{{ desa.kecamatan }}, {{ desa.kabupaten }}</td>
+            <td class="font-bold">{{ desa.esi_score|floatformat:2 }}</td>
+            <td>
+              {% if desa.kategori_esi == "Krisis Energi" %}<span
+                class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full"
+                >Krisis</span
+              >{% elif desa.kategori_esi == "Transisi Energi" %}<span
+                class="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5"
+                >Transisi</span
+              >{% else %}<span
+                class="bg-green-100 text-green-700 rounded-full px-2 py-0.5"
+                >Mandiri</span
+              >{% endif %}
+            </td>
+            <td>{{ desa.ketersediaan_energi }}</td>
+            <td>{{ desa.keterjangkauan_energi }}</td>
+            <td>{{ desa.keberlanjutan_energi }}</td>
+            <td>{{ desa.keandalan_energi }}</td>
+            <td>
+              <a
+                href="{% url 'detail_desa' desa.id %}"
+                class="text-teal-600 underline"
+                >Detail</a
+              >
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="p-6 text-center">Belum ada data.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
-
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: 18px;">
-        <div class="card-body p-4">
-            <div class="row g-3 align-items-end">
-
-                <div class="col-md-6">
-                    <label class="form-label">Cari Desa atau Lokasi</label>
-                    <input
-                        type="text"
-                        id="searchInput"
-                        class="form-control"
-                        placeholder="Ketik nama desa, kecamatan, kabupaten, atau provinsi"
-                        autocomplete="off"
-                    >
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Filter Kategori ESI</label>
-                    <select id="kategoriFilter" class="form-select">
-                        <option value="">Semua Kategori</option>
-                        <option value="Krisis Energi">Krisis Energi</option>
-                        <option value="Transisi Energi">Transisi Energi</option>
-                        <option value="Mandiri Energi">Mandiri Energi</option>
-                    </select>
-                </div>
-
-                <div class="col-md-2 d-grid">
-                    <button type="button" id="resetFilter" class="btn btn-secondary">
-                        Reset
-                    </button>
-                </div>
-
-            </div>
-
-            <div class="mt-3">
-                <small class="text-muted">
-                    Menampilkan <span id="jumlahHasil">0</span> desa.
-                </small>
-            </div>
-        </div>
+    <div id="emptyMessage" class="hidden text-center p-6 text-amber-600">
+      Data tidak ditemukan.
     </div>
-
-    <div class="card border-0 shadow-sm" style="border-radius: 18px;">
-        <div class="card-body p-4">
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>Nama Desa</th>
-                            <th>Lokasi</th>
-                            <th>Skor ESI</th>
-                            <th>Kategori</th>
-                            <th>Ketersediaan</th>
-                            <th>Keterjangkauan</th>
-                            <th>Keberlanjutan</th>
-                            <th>Keandalan</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="desaTableBody">
-                        {% for desa in desa_list %}
-                            <tr
-                                class="desa-row"
-                                data-search="{{ desa.nama_desa }} {{ desa.kecamatan }} {{ desa.kabupaten }} {{ desa.provinsi }}"
-                                data-kategori="{{ desa.kategori_esi }}"
-                            >
-                                <td class="fw-bold">{{ desa.nama_desa }}</td>
-                                <td>
-                                    {{ desa.kecamatan }},
-                                    {{ desa.kabupaten }}
-                                </td>
-                                <td>
-                                    <span class="fw-bold fs-5">
-                                        {{ desa.esi_score|floatformat:2 }}
-                                    </span>
-                                </td>
-                                <td>
-                                    {% if desa.kategori_esi == "Krisis Energi" %}
-                                        <span class="badge bg-danger">Krisis Energi</span>
-                                    {% elif desa.kategori_esi == "Transisi Energi" %}
-                                        <span class="badge bg-warning text-dark">Transisi Energi</span>
-                                    {% else %}
-                                        <span class="badge bg-success">Mandiri Energi</span>
-                                    {% endif %}
-                                </td>
-                                <td>{{ desa.ketersediaan_energi }}</td>
-                                <td>{{ desa.keterjangkauan_energi }}</td>
-                                <td>{{ desa.keberlanjutan_energi }}</td>
-                                <td>{{ desa.keandalan_energi }}</td>
-                                <td>
-                                    <a href="{% url 'detail_desa' desa.id %}" class="btn btn-sm btn-success">
-                                        Detail
-                                    </a>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="9" class="text-center text-muted">
-                                    Belum ada data desa.
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="emptyMessage" class="alert alert-warning d-none">
-                Data desa tidak ditemukan.
-            </div>
-
-        </div>
-    </div>
-
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
 <script>
-    const searchInput = document.getElementById("searchInput");
-    const kategoriFilter = document.getElementById("kategoriFilter");
-    const resetFilter = document.getElementById("resetFilter");
-    const jumlahHasil = document.getElementById("jumlahHasil");
-    const emptyMessage = document.getElementById("emptyMessage");
-    const desaRows = document.querySelectorAll(".desa-row");
-
-    function filterDesa() {
-        const keyword = searchInput.value.toLowerCase().trim();
-        const kategori = kategoriFilter.value;
-        let totalTampil = 0;
-
-        desaRows.forEach(function (row) {
-            const searchText = row.dataset.search.toLowerCase();
-            const rowKategori = row.dataset.kategori;
-
-            const cocokKeyword = searchText.includes(keyword);
-            const cocokKategori = kategori === "" || rowKategori === kategori;
-
-            if (cocokKeyword && cocokKategori) {
-                row.style.display = "";
-                totalTampil += 1;
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        jumlahHasil.textContent = totalTampil;
-
-        if (totalTampil === 0) {
-            emptyMessage.classList.remove("d-none");
-        } else {
-            emptyMessage.classList.add("d-none");
-        }
+  (function () {
+    const rows = document.querySelectorAll(".desa-row");
+    const search = document.getElementById("searchInput");
+    const kat = document.getElementById("kategoriFilter");
+    const reset = document.getElementById("resetFilter");
+    const empty = document.getElementById("emptyMessage");
+    function filter() {
+      let kw = search.value.toLowerCase().trim();
+      let k = kat.value;
+      let vis = 0;
+      rows.forEach((r) => {
+        let match =
+          r.dataset.search.toLowerCase().includes(kw) &&
+          (k === "" || r.dataset.kategori === k);
+        r.style.display = match ? "" : "none";
+        if (match) vis++;
+      });
+      empty.classList.toggle("hidden", vis > 0);
     }
-
-    searchInput.addEventListener("input", filterDesa);
-    kategoriFilter.addEventListener("change", filterDesa);
-
-    resetFilter.addEventListener("click", function () {
-        searchInput.value = "";
-        kategoriFilter.value = "";
-        filterDesa();
+    search.addEventListener("input", filter);
+    kat.addEventListener("change", filter);
+    reset.addEventListener("click", () => {
+      search.value = "";
+      kat.value = "";
+      filter();
     });
-
-    filterDesa();
+    filter();
+  })();
 </script>
 {% endblock %}

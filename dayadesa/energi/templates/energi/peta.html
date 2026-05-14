@@ -1,351 +1,215 @@
-{% extends "energi/base.html" %}
-
-{% block title %}DayaDesa - Peta Energi{% endblock %}
-
-{% block extra_css %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
+{% extends "energi/base.html" %} {% block title %}DayaDesa - Peta
+Energi{%endblock %} {% block extra_css %}
 <style>
-    body {
-        background-color: #f4f7f6;
-        font-family: Arial, sans-serif;
-    }
-
-    .navbar {
-        background-color: #0f766e;
-    }
-
-    .hero-card {
-        background: linear-gradient(135deg, #0f766e, #16a34a);
-        color: white;
-        border-radius: 18px;
-        padding: 28px;
-        margin-bottom: 24px;
-    }
-
-    .stat-card {
-        border: none;
-        border-radius: 16px;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-    }
-
-    #map {
-        height: 560px;
-        width: 100%;
-        border-radius: 18px;
-        border: 1px solid #d1d5db;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
-    }
-
-    .legend {
-        background: white;
-        padding: 12px 14px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        line-height: 1.8;
-        font-size: 14px;
-    }
-
-    .legend span {
-        display: inline-block;
-        width: 14px;
-        height: 14px;
-        margin-right: 8px;
-        border-radius: 50%;
-    }
-
-    .popup-title {
-        font-weight: bold;
-        font-size: 16px;
-        color: #0f766e;
-    }
-
-    .esi-score {
-        font-size: 22px;
-        font-weight: bold;
-    }
+  #map {
+    height: 520px;
+    width: 100%;
+    border-radius: 1.5rem;
+    z-index: 0;
+  }
+  .leaflet-popup-content {
+    min-width: 220px;
+  }
 </style>
-{% endblock %}
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-7 max-w-7xl">
+  <div
+    class="bg-gradient-to-r from-teal-700 to-emerald-600 rounded-2xl p-6 text-white mb-8"
+  >
+    <h1 class="text-2xl md:text-3xl font-bold">Peta Ketahanan Energi Desa</h1>
+    <p>
+      Visualisasi desa berdasarkan skor ESI (Ketersediaan, Keterjangkauan,
+      Keberlanjutan, Keandalan)
+    </p>
+  </div>
 
-{% block content %}
-<div class="container pt-4 mb-5">
-
-    <div class="hero-card">
-        <h1 class="mb-2">Peta Energi Desa</h1>
-        <p class="mb-0">
-            Visualisasi kondisi ketahanan energi desa berdasarkan Energy Security Index (ESI)
-            dengan indikator ketersediaan, keterjangkauan, keberlanjutan, dan keandalan energi.
-        </p>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm">
+      <h6 class="text-emerald-700 dark:text-emerald-300 font-semibold">
+        Total Desa
+      </h6>
+      <h3 class="text-3xl font-black">{{ jumlah_desa }}</h3>
     </div>
-
-    <div class="row mb-4">
-
-        <div class="col-md-4 mb-3">
-            <div class="card stat-card p-3">
-                <h6>Total Desa Terpetakan</h6>
-                <h3>{{ jumlah_desa }}</h3>
-                <p class="text-muted mb-0">Data desa yang sudah masuk sistem</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card stat-card p-3">
-                <h6>Total Laporan Warga</h6>
-                <h3>{{ jumlah_laporan }}</h3>
-                <p class="text-muted mb-0">Laporan yang masuk melalui Citizen Report</p>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-3">
-            <div class="card stat-card p-3">
-                <h6>Keterangan Warna ESI</h6>
-                <div class="d-flex flex-column gap-1">
-                    <span><strong style="color:red;">●</strong> Merah: Krisis Energi</span>
-                    <span><strong style="color:orange;">●</strong> Kuning: Transisi Energi</span>
-                    <span><strong style="color:green;">●</strong> Hijau: Mandiri Energi</span>
-                </div>
-            </div>
-        </div>
-
+    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm">
+      <h6 class="text-emerald-700 dark:text-emerald-300">Total Laporan</h6>
+      <h3 class="text-3xl font-black">{{ jumlah_laporan }}</h3>
     </div>
-
-    <div class="card stat-card p-4 mb-4">
-        <div class="row g-3 align-items-end">
-
-            <div class="col-md-6">
-                <label class="form-label">Cari Desa atau Lokasi</label>
-                <input
-                    type="text"
-                    id="mapSearchInput"
-                    class="form-control"
-                    placeholder="Ketik nama desa, kecamatan, kabupaten, atau provinsi"
-                    autocomplete="off"
-                >
-            </div>
-
-            <div class="col-md-4">
-                <label class="form-label">Filter Kategori ESI</label>
-                <select id="mapKategoriFilter" class="form-select">
-                    <option value="">Semua Kategori</option>
-                    <option value="Krisis Energi">Krisis Energi</option>
-                    <option value="Transisi Energi">Transisi Energi</option>
-                    <option value="Mandiri Energi">Mandiri Energi</option>
-                </select>
-            </div>
-
-            <div class="col-md-2 d-grid">
-                <button type="button" id="mapResetFilter" class="btn btn-secondary">
-                    Reset
-                </button>
-            </div>
-
-        </div>
-
-        <div class="mt-3">
-            <small class="text-muted">
-                Menampilkan <span id="mapJumlahHasil">0</span> desa pada peta.
-            </small>
-        </div>
+    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm">
+      <div class="flex gap-3 text-sm">
+        <span
+          ><span class="inline-block w-3 h-3 rounded-full bg-red-500"></span>
+          Krisis</span
+        >
+        <span
+          ><span class="inline-block w-3 h-3 rounded-full bg-orange-400"></span>
+          Transisi</span
+        >
+        <span
+          ><span class="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+          Mandiri</span
+        >
+      </div>
     </div>
+  </div>
 
-    <div id="map"></div>
-
-    <div class="card stat-card mt-4 p-4">
-        <h5 class="fw-bold mb-3">Ringkasan Kategori ESI</h5>
-        <canvas id="esiChart" height="110"></canvas>
+  <div
+    class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm mb-5 flex flex-wrap gap-3 items-end"
+  >
+    <div class="flex-1 min-w-[180px]">
+      <label class="text-sm text-slate-500 dark:text-slate-400"
+        >Cari desa / lokasi</label
+      >
+      <input
+        type="text"
+        id="mapSearchInput"
+        class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+        placeholder="nama desa/kecamatan"
+      />
     </div>
+    <div class="w-44">
+      <label class="text-sm text-slate-500">Kategori ESI</label>
+      <select
+        id="mapKategoriFilter"
+        class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+      >
+        <option value="">Semua</option>
+        <option value="Krisis Energi">Krisis</option>
+        <option value="Transisi Energi">Transisi</option>
+        <option value="Mandiri Energi">Mandiri</option>
+      </select>
+    </div>
+    <button
+      id="mapResetFilter"
+      class="bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 px-4 py-2 rounded-xl hover:bg-slate-300 transition"
+    >
+      Reset
+    </button>
+  </div>
 
+  <div id="map"></div>
+
+  <div class="mt-6 bg-white dark:bg-slate-800 p-5 rounded-2xl">
+    <canvas id="esiChart" height="90"></canvas>
+  </div>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-{{ jumlah_krisis|json_script:"jumlah-krisis" }}
-{{ jumlah_transisi|json_script:"jumlah-transisi" }}
-{{ jumlah_mandiri|json_script:"jumlah-mandiri" }}
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+{% endblock %} {% block extra_js %}
 <script>
-    const map = L.map("map").setView([-5.40, 105.30], 10);
+  // Data jumlah desa per kategori (dikirim dari view)
+  const jumlahKrisis = {{ jumlah_krisis|default:0 }};
+  const jumlahTransisi = {{ jumlah_transisi|default:0 }};
+  const jumlahMandiri = {{ jumlah_mandiri|default:0 }};
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: "&copy; OpenStreetMap contributors"
+  // Inisialisasi peta setelah DOM siap
+  document.addEventListener('DOMContentLoaded', function() {
+    // Pastikan Leaflet sudah dimuat
+    if (typeof L === 'undefined') {
+      console.error('Leaflet not loaded');
+      return;
+    }
+
+    const map = L.map('map').setView([-5.4, 105.3], 10);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
+      subdomains: 'abcd',
+      maxZoom: 19
     }).addTo(map);
 
-    const markerGroup = L.featureGroup();
-    const allMarkers = [];
+    let markersGroup = L.featureGroup();
+    let allMarkers = [];
 
-    const mapSearchInput = document.getElementById("mapSearchInput");
-    const mapKategoriFilter = document.getElementById("mapKategoriFilter");
-    const mapResetFilter = document.getElementById("mapResetFilter");
-    const mapJumlahHasil = document.getElementById("mapJumlahHasil");
+    const searchInput = document.getElementById('mapSearchInput');
+    const kategoriSelect = document.getElementById('mapKategoriFilter');
+    const resetBtn = document.getElementById('mapResetFilter');
 
-    function buatPopupDesa(desa) {
-        return `
-            <div>
-                <div class="popup-title">${desa.nama_desa}</div>
-                <div>${desa.kecamatan}, ${desa.kabupaten}</div>
-                <hr>
-                <div>Skor ESI:</div>
-                <div class="esi-score">${desa.esi_score}</div>
-                <div><strong>Kategori:</strong> ${desa.kategori_esi}</div>
-                <hr>
-                <div><strong>4 Pilar ESI</strong></div>
-                <div>Ketersediaan Energi: ${desa.ketersediaan_energi}</div>
-                <div>Keterjangkauan Energi: ${desa.keterjangkauan_energi}</div>
-                <div>Keberlanjutan Energi: ${desa.keberlanjutan_energi}</div>
-                <div>Keandalan Energi: ${desa.keandalan_energi}</div>
-                <hr>
-                <div><strong>Laporan Warga:</strong> ${desa.jumlah_laporan}</div>
-                <hr>
-                <div class="d-flex gap-2">
-                    <a href="/desa/${desa.id}/" class="btn btn-sm btn-success">
-                        Detail
-                    </a>
-                    <a href="/lapor/?desa=${desa.id}" class="btn btn-sm btn-outline-success">
-                        Laporkan
-                    </a>
-                </div>
-            </div>
-        `;
+    function updateMap() {
+      const keyword = searchInput.value.toLowerCase().trim();
+      const kategori = kategoriSelect.value;
+      markersGroup.clearLayers();
+      let count = 0;
+      allMarkers.forEach(item => {
+        const desa = item.desa;
+        const searchText = `${desa.nama_desa} ${desa.kecamatan} ${desa.kabupaten} ${desa.provinsi}`.toLowerCase();
+        const matchKeyword = searchText.includes(keyword);
+        const matchKategori = (kategori === '' || desa.kategori_esi === kategori);
+        if (matchKeyword && matchKategori) {
+          markersGroup.addLayer(item.marker);
+          count++;
+        }
+      });
+      // Update jumlah hasil (opsional: buat elemen span)
+      if (count > 0) {
+        map.fitBounds(markersGroup.getBounds(), { padding: [35, 35] });
+      }
     }
 
-    function tampilkanMarkerSesuaiFilter() {
-        const keyword = mapSearchInput.value.toLowerCase().trim();
-        const kategori = mapKategoriFilter.value;
-        let totalTampil = 0;
+    // Fetch data desa dari API
+    fetch('/api/desa/')
+      .then(response => response.json())
+      .then(data => {
+        const desaList = data.data || [];
+        desaList.forEach(desa => {
+          let warna = '#22c55e'; // default green
+          if (desa.kategori_esi === 'Krisis Energi') warna = '#e11d48';
+          else if (desa.kategori_esi === 'Transisi Energi') warna = '#f59e0b';
 
-        markerGroup.clearLayers();
+          const marker = L.circleMarker([desa.latitude, desa.longitude], {
+            radius: 11,
+            color: warna,
+            fillColor: warna,
+            fillOpacity: 0.75,
+            weight: 2
+          });
 
-        allMarkers.forEach(function (item) {
-            const desa = item.desa;
-            const marker = item.marker;
-
-            const searchText = `
-                ${desa.nama_desa}
-                ${desa.kecamatan}
-                ${desa.kabupaten}
-                ${desa.provinsi}
-            `.toLowerCase();
-
-            const cocokKeyword = searchText.includes(keyword);
-            const cocokKategori = kategori === "" || desa.kategori_esi === kategori;
-
-            if (cocokKeyword && cocokKategori) {
-                markerGroup.addLayer(marker);
-                totalTampil += 1;
-            }
+          const popupContent = `
+            <div class="font-bold text-teal-800">${desa.nama_desa}</div>
+            <div>${desa.kecamatan}, ${desa.kabupaten}</div>
+            <div class="text-xl font-black my-1">ESI: ${desa.esi_score}</div>
+            <div class="mb-2">${desa.kategori_esi}</div>
+            <hr class="my-2">
+            <a href="/desa/${desa.id}/" class="inline-block bg-teal-600 text-white px-3 py-1 rounded text-sm mr-2">Detail</a>
+            <a href="/lapor/?desa=${desa.id}" class="inline-block border border-teal-600 text-teal-600 px-3 py-1 rounded text-sm">Lapor</a>
+          `;
+          marker.bindPopup(popupContent);
+          allMarkers.push({ desa, marker });
         });
+        markersGroup.addTo(map);
+        updateMap();
+      })
+      .catch(error => {
+        console.error('Gagal ambil data desa:', error);
+        // Tampilkan pesan error di peta?
+        map.setView([-5.4, 105.3], 8);
+      });
 
-        mapJumlahHasil.textContent = totalTampil;
-
-        if (totalTampil > 0) {
-            map.fitBounds(markerGroup.getBounds(), {
-                padding: [40, 40]
-            });
-        }
-    }
-
-    fetch("/api/desa/")
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (responseData) {
-            const desaData = responseData.data;
-
-            desaData.forEach(function (desa) {
-                const marker = L.circleMarker([desa.latitude, desa.longitude], {
-                    radius: 12,
-                    color: desa.warna_esi,
-                    fillColor: desa.warna_esi,
-                    fillOpacity: 0.75,
-                    weight: 2
-                });
-
-                marker.bindPopup(buatPopupDesa(desa));
-
-                allMarkers.push({
-                    desa: desa,
-                    marker: marker
-                });
-            });
-
-            markerGroup.addTo(map);
-            tampilkanMarkerSesuaiFilter();
-        })
-        .catch(function (error) {
-            console.error("Gagal mengambil data desa:", error);
-        });
-
-    mapSearchInput.addEventListener("input", tampilkanMarkerSesuaiFilter);
-    mapKategoriFilter.addEventListener("change", tampilkanMarkerSesuaiFilter);
-
-    mapResetFilter.addEventListener("click", function () {
-        mapSearchInput.value = "";
-        mapKategoriFilter.value = "";
-        tampilkanMarkerSesuaiFilter();
+    // Event listeners
+    searchInput.addEventListener('input', updateMap);
+    kategoriSelect.addEventListener('change', updateMap);
+    resetBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      kategoriSelect.value = '';
+      updateMap();
     });
 
-    const legend = L.control({ position: "bottomright" });
-
-    legend.onAdd = function () {
-        const div = L.DomUtil.create("div", "legend");
-        div.innerHTML = `
-            <strong>Kategori ESI</strong><br>
-            <span style="background:red;"></span> Krisis Energi<br>
-            <span style="background:orange;"></span> Transisi Energi<br>
-            <span style="background:green;"></span> Mandiri Energi
-        `;
-        return div;
-    };
-
-    legend.addTo(map);
-
-    const jumlahKrisis = JSON.parse(
-        document.getElementById("jumlah-krisis").textContent
-    );
-
-    const jumlahTransisi = JSON.parse(
-        document.getElementById("jumlah-transisi").textContent
-    );
-
-    const jumlahMandiri = JSON.parse(
-        document.getElementById("jumlah-mandiri").textContent
-    );
-
-    const esiChartElement = document.getElementById("esiChart");
-
-    new Chart(esiChartElement, {
-        type: "bar",
-        data: {
-            labels: ["Krisis Energi", "Transisi Energi", "Mandiri Energi"],
-            datasets: [
-                {
-                    label: "Jumlah Desa",
-                    data: [jumlahKrisis, jumlahTransisi, jumlahMandiri],
-                    backgroundColor: ["#dc3545", "#ffc107", "#198754"],
-                    borderRadius: 8
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
+    // Chart JS untuk kategori
+    const ctx = document.getElementById('esiChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Krisis Energi', 'Transisi Energi', 'Mandiri Energi'],
+        datasets: [{
+          label: 'Jumlah Desa',
+          data: [jumlahKrisis, jumlahTransisi, jumlahMandiri],
+          backgroundColor: ['#e11d48', '#f59e0b', '#22c55e'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+      }
     });
+  });
 </script>
 {% endblock %}

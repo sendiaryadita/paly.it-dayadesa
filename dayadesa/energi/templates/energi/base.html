@@ -1,53 +1,278 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}DayaDesa{% endblock %}</title>
+{% load static %}
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <title>
+      {% block title %}DayaDesa • Energi Desa Berkelanjutan{% endblock %}
+    </title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    {% block extra_css %}{% endblock %}
+    <!-- Tailwind CSS + Font Inter -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
     {% include "energi/partials/theme_assets.html" %}
-</head>
 
-<body style="background-color: #f4f7f6;">
-
-{% block navbar %}
-<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0f766e;">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">DayaDesa</a>
-
-        {% with active_url=request.resolver_match.url_name %}
-            <div class="d-flex gap-2 flex-wrap">
-                <a href="{% url 'dashboard' %}" class="btn {% if active_url == 'dashboard' %}btn-light{% else %}btn-outline-light{% endif %} btn-sm">
-                    Dashboard
-                </a>
-                <a href="{% url 'peta_energi' %}" class="btn {% if active_url == 'peta_energi' %}btn-light{% else %}btn-outline-light{% endif %} btn-sm">
-                    Peta Energi
-                </a>
-                <a href="{% url 'indeks_desa' %}" class="btn {% if active_url == 'indeks_desa' %}btn-light{% else %}btn-outline-light{% endif %} btn-sm">
-                    Indeks Desa
-                </a>
-                <a href="{% url 'buat_laporan' %}" class="btn {% if active_url == 'buat_laporan' %}btn-light{% else %}btn-outline-light{% endif %} btn-sm">
-                    Buat Laporan
-                </a>
-                <a href="{% url 'daftar_laporan' %}" class="btn {% if active_url == 'daftar_laporan' %}btn-light{% else %}btn-outline-light{% endif %} btn-sm">
-                    Daftar Laporan
-                </a>
-                <a href="{% url 'tentang' %}" class="btn {% if active_url == 'tentang' %}btn-light{% else %}btn-outline-light{% endif %} btn-sm">
-                    Tentang
-                </a>
-                {% include "energi/partials/theme_toggle.html" %}
+    <style>
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+      }
+      .card-hover {
+        transition: all 0.25s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+      }
+      .fade-in {
+        animation: fadeInUp 0.4s ease-out;
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body
+    class="bg-gradient-to-b from-white to-emerald-50/40 dark:from-slate-900 dark:to-slate-800 text-slate-700 dark:text-slate-200 transition-colors duration-300"
+  >
+    {% block navbar %}
+    <nav
+      class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-emerald-100 dark:border-slate-700 shadow-sm"
+    >
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between py-3">
+          <a
+            href="{% url 'dashboard' %}"
+            class="flex items-center gap-2 text-xl font-extrabold tracking-tight text-teal-800 dark:text-teal-300"
+          >
+            <span
+              class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center shadow-md"
+              >D</span
+            >
+            <span>DayaDesa</span>
+          </a>
+          <button
+            type="button"
+            id="mobile-menu-btn"
+            class="lg:hidden rounded-lg p-2 text-teal-700 dark:text-teal-300 hover:bg-emerald-50 dark:hover:bg-slate-700"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+          <div
+            class="hidden lg:flex lg:items-center lg:gap-1 w-full lg:w-auto mt-4 lg:mt-0"
+            id="mainNavbar"
+          >
+            <div class="flex flex-col lg:flex-row lg:items-center gap-1">
+              {% with active_url=request.resolver_match.url_name %}
+              <a
+                href="{% url 'dashboard' %}"
+                class="nav-link-base {% if active_url == 'dashboard' %}nav-active{% else %}nav-inactive{% endif %}"
+                >Dashboard</a
+              >
+              <a
+                href="{% url 'peta_energi' %}"
+                class="nav-link-base {% if active_url == 'peta_energi' %}nav-active{% else %}nav-inactive{% endif %}"
+                >Peta Energi</a
+              >
+              <a
+                href="{% url 'indeks_desa' %}"
+                class="nav-link-base {% if active_url == 'indeks_desa' %}nav-active{% else %}nav-inactive{% endif %}"
+                >Indeks Desa</a
+              >
+              <a
+                href="{% url 'buat_laporan' %}"
+                class="nav-link-base {% if active_url == 'buat_laporan' %}nav-active{% else %}nav-inactive{% endif %}"
+                >Buat Laporan</a
+              >
+              <a
+                href="{% url 'daftar_laporan' %}"
+                class="nav-link-base {% if active_url == 'daftar_laporan' %}nav-active{% else %}nav-inactive{% endif %}"
+                >Daftar Laporan</a
+              >
+              <a
+                href="{% url 'tentang' %}"
+                class="nav-link-base {% if active_url == 'tentang' %}nav-active{% else %}nav-inactive{% endif %}"
+                >Tentang</a
+              >
+              {% endwith %}
             </div>
-        {% endwith %}
+            <div
+              class="flex items-center gap-2 mt-4 lg:mt-0 lg:ml-4 border-t lg:border-0 pt-4 lg:pt-0 border-emerald-100 dark:border-slate-700"
+            >
+              {% if request.user.is_authenticated %}
+              <span
+                class="bg-emerald-100 dark:bg-emerald-900/40 text-teal-800 dark:text-teal-200 text-sm font-semibold px-4 py-2 rounded-full"
+                >{{ request.user.first_name|default:request.user.username
+                }}</span
+              >
+              <a
+                href="{% url 'logout_anggota' %}"
+                class="px-4 py-2 rounded-full border border-emerald-200 dark:border-slate-600 text-teal-700 dark:text-teal-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition"
+                >Keluar</a
+              >
+              {% else %}
+              <a
+                href="{% url 'login_anggota' %}"
+                class="px-5 py-2 rounded-full text-teal-700 dark:text-teal-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition"
+                >Login</a
+              >
+              <a
+                href="{% url 'daftar_anggota' %}"
+                class="px-5 py-2 rounded-full bg-teal-600 text-white shadow-sm hover:bg-teal-700 transition"
+                >Daftar</a
+              >
+              {% endif %} {% include "energi/partials/theme_toggle.html" %}
+            </div>
+          </div>
+        </div>
+        <div
+          id="mobileNav"
+          class="hidden lg:hidden pb-4 flex flex-col gap-2 border-t border-emerald-100 dark:border-slate-700 mt-2 pt-3"
+        >
+          <a
+            href="{% url 'dashboard' %}"
+            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
+            >Dashboard</a
+          >
+          <a
+            href="{% url 'peta_energi' %}"
+            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
+            >Peta Energi</a
+          >
+          <a
+            href="{% url 'indeks_desa' %}"
+            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
+            >Indeks Desa</a
+          >
+          <a
+            href="{% url 'buat_laporan' %}"
+            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
+            >Buat Laporan</a
+          >
+          <a
+            href="{% url 'daftar_laporan' %}"
+            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
+            >Daftar Laporan</a
+          >
+          <a
+            href="{% url 'tentang' %}"
+            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
+            >Tentang</a
+          >
+          <hr class="my-1 border-emerald-100 dark:border-slate-700" />
+          {% if not request.user.is_authenticated %}
+          <a
+            href="{% url 'login_anggota' %}"
+            class="py-2 px-2 text-teal-700 dark:text-teal-300"
+            >Login</a
+          >
+          <a
+            href="{% url 'daftar_anggota' %}"
+            class="py-2 px-2 bg-teal-50 dark:bg-teal-900/30 text-teal-800 dark:text-teal-200 rounded-xl text-center"
+            >Daftar</a
+          >
+          {% else %}
+          <span
+            class="py-2 px-2 bg-emerald-100 dark:bg-emerald-900/40 rounded-xl text-center"
+            >{{ request.user.username }}</span
+          >
+          <a
+            href="{% url 'logout_anggota' %}"
+            class="py-2 px-2 text-red-600 dark:text-red-400"
+            >Keluar</a
+          >
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+    <style>
+      .nav-link-base {
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      .nav-active {
+        background: #d1fae5;
+        color: #0f766e;
+      }
+      .nav-inactive {
+        color: #4b5563;
+      }
+      .nav-inactive:hover {
+        background: #ecfdf5;
+        color: #0f766e;
+      }
+      html.dark .nav-active {
+        background: #115e59;
+        color: #ccfbf1;
+      }
+      html.dark .nav-inactive {
+        color: #cbd5e1;
+      }
+      html.dark .nav-inactive:hover {
+        background: #134e4a;
+        color: #bbf7d0;
+      }
+    </style>
+    {% endblock %} {% if messages %}
+    <div class="container mx-auto px-4 pt-5">
+      {% for message in messages %}
+      <div
+        class="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-500 text-emerald-800 dark:text-emerald-200 p-4 rounded-2xl shadow-sm mb-3"
+      >
+        {{ message }}
+      </div>
+      {% endfor %}
     </div>
-</nav>
-{% endblock %}
+    {% endif %}
 
-{% block content %}{% endblock %}
+    <main class="min-h-screen fade-in">{% block content %}{% endblock %}</main>
 
-{% block extra_js %}{% endblock %}
-{% include "energi/partials/theme_script.html" %}
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+      (function () {
+        const btn = document.getElementById("mobile-menu-btn");
+        const mobileNav = document.getElementById("mobileNav");
+        if (btn && mobileNav)
+          btn.addEventListener("click", () =>
+            mobileNav.classList.toggle("hidden"),
+          );
+      })();
+    </script>
+    {% block extra_js %}{% endblock %}
+    {% include "energi/partials/theme_script.html" %}
 </body>
 </html>
