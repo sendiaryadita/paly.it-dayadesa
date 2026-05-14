@@ -26,6 +26,19 @@ DayaDesa adalah sistem informasi geospasial ketahanan energi desa berbasis web y
 - Chart.js
 - OpenStreetMap
 
+## Menjalankan Project Lokal
+
+Project memakai SQLite secara default untuk development lokal.
+
+```bash
+source venv/bin/activate
+python manage.py migrate
+python manage.py seed_data
+python manage.py runserver
+```
+
+Jika ingin memakai PostgreSQL, set `DB_ENGINE=postgresql` di `.env`, lalu pastikan database PostgreSQL aktif dan nilai `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_HOST`, dan `DB_PORT` sudah benar.
+
 ## Struktur Fitur ESI
 
 Energy Security Index dihitung berdasarkan 4 pilar:
