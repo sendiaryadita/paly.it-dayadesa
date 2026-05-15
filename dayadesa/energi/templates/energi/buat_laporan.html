@@ -1,53 +1,55 @@
-<!-- FILE: templates/energi/buat_laporan.html -->
-{% extends "energi/base.html" %} {% block title %}Buat Laporan • DayaDesa
-{%endblock %} {% block content %}
-<div class="container mx-auto px-4 py-12 max-w-3xl">
-  <div
-    class="bg-white rounded-2xl shadow-xl border border-emerald-100 overflow-hidden transition-all duration-300"
-  >
-    <div class="bg-gradient-to-r from-teal-50 to-white p-6 border-b">
-      <h2 class="text-2xl font-bold text-teal-800">Citizen Report</h2>
-      <p class="text-slate-500">Laporkan kondisi energi desa Anda</p>
+{% extends "energi/base.html" %}
+{% block title %}Buat Laporan &bull; DayaDesa{% endblock %}
+{% block content %}
+<div class="container mx-auto max-w-3xl px-4 py-12">
+  <div class="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-800">
+    <div class="border-b border-emerald-100 bg-gradient-to-r from-teal-50 to-white p-6 dark:border-slate-700 dark:from-slate-800 dark:to-slate-800">
+      <h2 class="text-2xl font-bold text-teal-800 dark:text-teal-300">Citizen Report</h2>
+      <p class="text-slate-500 dark:text-slate-400">Laporkan kondisi energi desa Anda</p>
     </div>
+
     <div class="p-6 md:p-8">
       {% if selected_desa %}
-      <div
-        class="bg-emerald-50 text-emerald-800 p-4 rounded-xl mb-5 text-sm font-medium"
-      >
+      <div class="mb-5 rounded-xl bg-emerald-50 p-4 text-sm font-medium text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200">
         Laporan akan diarahkan ke <strong>{{ selected_desa.nama_desa }}</strong>
       </div>
       {% endif %}
+
       <form method="post" class="space-y-5">
         {% csrf_token %}
         <div>
-          <label class="block font-semibold mb-1">{{ form.desa.label }}</label
-          >{{ form.desa }}{{ form.desa.errors }}
+          <label class="mb-1 block font-semibold">{{ form.desa.label }}</label>
+          {{ form.desa }}
+          {{ form.desa.errors }}
         </div>
         <div>
-          <label class="block font-semibold"
-            >{{ form.nama_pelapor.label }}</label
-          >{{ form.nama_pelapor }}{{ form.nama_pelapor.errors }}
+          <label class="block font-semibold">{{ form.nama_pelapor.label }}</label>
+          {{ form.nama_pelapor }}
+          {{ form.nama_pelapor.errors }}
         </div>
         <div>
-          <label class="block font-semibold"
-            >{{ form.kategori_laporan.label }}</label
-          >{{ form.kategori_laporan }}{{ form.kategori_laporan.errors }}
+          <label class="block font-semibold">{{ form.kategori_laporan.label }}</label>
+          {{ form.kategori_laporan }}
+          {{ form.kategori_laporan.errors }}
         </div>
         <div>
-          <label class="block font-semibold">{{ form.isi_laporan.label }}</label
-          >{{ form.isi_laporan }}{{ form.isi_laporan.errors }}
+          <label class="block font-semibold">{{ form.isi_laporan.label }}</label>
+          {{ form.isi_laporan }}
+          {{ form.isi_laporan.errors }}
         </div>
         <div class="flex gap-3 pt-2">
           <button
             type="submit"
-            class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-xl transition shadow"
+            class="rounded-xl bg-teal-600 px-6 py-2 text-white shadow transition hover:bg-teal-700"
           >
-            Kirim Laporan</button
-          ><a
+            Kirim Laporan
+          </button>
+          <a
             href="{% url 'peta_energi' %}"
-            class="border border-slate-300 px-5 py-2 rounded-xl hover:bg-slate-50"
-            >Kembali</a
+            class="rounded-xl border border-slate-300 px-5 py-2 hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-700"
           >
+            Kembali
+          </a>
         </div>
       </form>
     </div>

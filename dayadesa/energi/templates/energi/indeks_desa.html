@@ -1,26 +1,26 @@
-{% extends "energi/base.html" %} {% block title %}DayaDesa - Indeks
-Desa{%endblock %} {% block content %}
+{% extends "energi/base.html" %}
+{% block title %}DayaDesa - Indeks Desa{% endblock %}
+{% block content %}
 <div class="container mx-auto px-4 py-8">
   <div class="mb-6">
     <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
-      📊 Indeks Ketahanan Energi Desa
+      &#128202; Indeks Ketahanan Energi Desa
     </h2>
     <p class="text-slate-500 dark:text-slate-400">
       Skor ESI berdasarkan 4 pilar
     </p>
   </div>
-  <div
-    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm p-5 mb-8 flex flex-wrap gap-4"
-  >
+
+  <div class="mb-8 flex flex-wrap gap-4 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
     <input
       type="text"
       id="searchInput"
       placeholder="Cari desa / kecamatan"
-      class="flex-1 border border-emerald-200 dark:border-slate-600 rounded-xl p-2"
+      class="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
     />
     <select
       id="kategoriFilter"
-      class="border border-emerald-200 dark:border-slate-600 rounded-xl p-2"
+      class="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
     >
       <option value="">Semua Kategori</option>
       <option value="Krisis Energi">Krisis</option>
@@ -29,59 +29,58 @@ Desa{%endblock %} {% block content %}
     </select>
     <button
       id="resetFilter"
-      class="bg-slate-200 dark:bg-slate-700 px-5 rounded-xl"
+      class="rounded-xl bg-slate-200 px-5 text-slate-700 dark:bg-slate-700 dark:text-slate-300"
     >
       Reset
     </button>
   </div>
-  <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow">
+
+  <div class="overflow-hidden rounded-2xl bg-white shadow dark:bg-slate-800">
     <div class="overflow-x-auto">
       <table class="min-w-full text-sm">
         <thead class="bg-emerald-50 dark:bg-slate-700">
           <tr>
-            <th class="p-3">Desa</th>
-            <th>Lokasi</th>
-            <th>ESI</th>
-            <th>Kategori</th>
-            <th>Ketersediaan</th>
-            <th>Keterjangkauan</th>
-            <th>Keberlanjutan</th>
-            <th>Keandalan</th>
-            <th>Aksi</th>
+            <th class="p-3 text-left">Desa</th>
+            <th class="p-3 text-left">Lokasi</th>
+            <th class="p-3 text-left">ESI</th>
+            <th class="p-3 text-left">Kategori</th>
+            <th class="p-3 text-left">Ketersediaan</th>
+            <th class="p-3 text-left">Keterjangkauan</th>
+            <th class="p-3 text-left">Keberlanjutan</th>
+            <th class="p-3 text-left">Keandalan</th>
+            <th class="p-3 text-left">Aksi</th>
           </tr>
         </thead>
         <tbody id="desaTableBody">
           {% for desa in desa_list %}
           <tr
-            class="desa-row border-b"
+            class="desa-row border-b border-slate-100 dark:border-slate-700"
             data-search="{{ desa.nama_desa }} {{ desa.kecamatan }} {{ desa.kabupaten }}"
             data-kategori="{{ desa.kategori_esi }}"
           >
             <td class="p-3 font-semibold">{{ desa.nama_desa }}</td>
-            <td>{{ desa.kecamatan }}, {{ desa.kabupaten }}</td>
-            <td class="font-bold">{{ desa.esi_score|floatformat:2 }}</td>
-            <td>
-              {% if desa.kategori_esi == "Krisis Energi" %}<span
-                class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full"
-                >Krisis</span
-              >{% elif desa.kategori_esi == "Transisi Energi" %}<span
-                class="bg-amber-100 text-amber-700 rounded-full px-2 py-0.5"
-                >Transisi</span
-              >{% else %}<span
-                class="bg-green-100 text-green-700 rounded-full px-2 py-0.5"
-                >Mandiri</span
-              >{% endif %}
+            <td class="p-3">{{ desa.kecamatan }}, {{ desa.kabupaten }}</td>
+            <td class="p-3 font-bold">{{ desa.esi_score|floatformat:2 }}</td>
+            <td class="p-3">
+              {% if desa.kategori_esi == "Krisis Energi" %}
+              <span class="rounded-full bg-red-100 px-2 py-0.5 text-red-700">Krisis</span>
+              {% elif desa.kategori_esi == "Transisi Energi" %}
+              <span class="rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">Transisi</span>
+              {% else %}
+              <span class="rounded-full bg-green-100 px-2 py-0.5 text-green-700">Mandiri</span>
+              {% endif %}
             </td>
-            <td>{{ desa.ketersediaan_energi }}</td>
-            <td>{{ desa.keterjangkauan_energi }}</td>
-            <td>{{ desa.keberlanjutan_energi }}</td>
-            <td>{{ desa.keandalan_energi }}</td>
-            <td>
+            <td class="p-3">{{ desa.ketersediaan_energi }}</td>
+            <td class="p-3">{{ desa.keterjangkauan_energi }}</td>
+            <td class="p-3">{{ desa.keberlanjutan_energi }}</td>
+            <td class="p-3">{{ desa.keandalan_energi }}</td>
+            <td class="p-3">
               <a
                 href="{% url 'detail_desa' desa.id %}"
                 class="text-teal-600 underline"
-                >Detail</a
               >
+                Detail
+              </a>
             </td>
           </tr>
           {% empty %}
@@ -92,11 +91,12 @@ Desa{%endblock %} {% block content %}
         </tbody>
       </table>
     </div>
-    <div id="emptyMessage" class="hidden text-center p-6 text-amber-600">
+    <div id="emptyMessage" class="hidden p-6 text-center text-amber-600">
       Data tidak ditemukan.
     </div>
   </div>
 </div>
+
 <script>
   (function () {
     const rows = document.querySelectorAll(".desa-row");
@@ -104,19 +104,23 @@ Desa{%endblock %} {% block content %}
     const kat = document.getElementById("kategoriFilter");
     const reset = document.getElementById("resetFilter");
     const empty = document.getElementById("emptyMessage");
+
     function filter() {
-      let kw = search.value.toLowerCase().trim();
-      let k = kat.value;
-      let vis = 0;
-      rows.forEach((r) => {
-        let match =
-          r.dataset.search.toLowerCase().includes(kw) &&
-          (k === "" || r.dataset.kategori === k);
-        r.style.display = match ? "" : "none";
-        if (match) vis++;
+      const kw = search.value.toLowerCase().trim();
+      const kategori = kat.value;
+      let visible = 0;
+
+      rows.forEach((row) => {
+        const match =
+          row.dataset.search.toLowerCase().includes(kw) &&
+          (kategori === "" || row.dataset.kategori === kategori);
+        row.style.display = match ? "" : "none";
+        if (match) visible += 1;
       });
-      empty.classList.toggle("hidden", vis > 0);
+
+      empty.classList.toggle("hidden", visible > 0);
     }
+
     search.addEventListener("input", filter);
     kat.addEventListener("change", filter);
     reset.addEventListener("click", () => {
@@ -124,6 +128,7 @@ Desa{%endblock %} {% block content %}
       kat.value = "";
       filter();
     });
+
     filter();
   })();
 </script>

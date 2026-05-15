@@ -52,6 +52,64 @@
     color: #ccfbf1 !important;
   }
 
+  .form-control,
+  .form-select,
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font: inherit;
+    width: 100%;
+    color: #0f172a;
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+  }
+
+  .form-control,
+  .form-select {
+    padding: 0.625rem 0.875rem;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"])::placeholder,
+  textarea::placeholder {
+    color: #94a3b8;
+  }
+
+  .form-control:focus,
+  .form-select:focus,
+  input:not([type="checkbox"]):not([type="radio"]):focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #14b8a6;
+    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.18);
+  }
+
+  html.dark .form-control,
+  html.dark .form-select,
+  html.dark input:not([type="checkbox"]):not([type="radio"]),
+  html.dark select,
+  html.dark textarea {
+    color: #e2e8f0 !important;
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+  }
+
+  html.dark .form-control::placeholder,
+  html.dark input:not([type="checkbox"]):not([type="radio"])::placeholder,
+  html.dark textarea::placeholder {
+    color: #64748b;
+  }
+
+  html.dark .form-control:focus,
+  html.dark .form-select:focus,
+  html.dark input:not([type="checkbox"]):not([type="radio"]):focus,
+  html.dark select:focus,
+  html.dark textarea:focus {
+    border-color: #14b8a6 !important;
+    box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.22);
+  }
+
   /* Leaflet map dark mode */
   html.dark .leaflet-container {
     background: #1e293b;

@@ -15,6 +15,13 @@ Anggota{%endblock %} {% block content %}
 
     <form method="post" novalidate>
       {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div
+        class="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-200"
+      >
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
 
       <!-- Username -->
       <div class="mb-4">
@@ -26,7 +33,7 @@ Anggota{%endblock %} {% block content %}
           type="text"
           name="username"
           value="{{ form.username.value|default:'' }}"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-teal-500"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
           required
         />
         {% if form.username.errors %}
@@ -43,8 +50,8 @@ Anggota{%endblock %} {% block content %}
         <input
           type="email"
           name="email"
-          value="{{ form.email.value|default:'' }}"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+          value="{{ request.POST.email|default:'' }}"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
         />
       </div>
 
@@ -57,8 +64,8 @@ Anggota{%endblock %} {% block content %}
         <input
           type="text"
           name="first_name"
-          value="{{ form.first_name.value|default:'' }}"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+          value="{{ request.POST.first_name|default:'' }}"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
         />
       </div>
 
@@ -71,7 +78,7 @@ Anggota{%endblock %} {% block content %}
         <input
           type="password"
           name="password1"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
           required
         />
         {% if form.password1.errors %}
@@ -88,7 +95,7 @@ Anggota{%endblock %} {% block content %}
         <input
           type="password"
           name="password2"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
           required
         />
         {% if form.password2.errors %}

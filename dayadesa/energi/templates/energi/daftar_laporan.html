@@ -1,68 +1,51 @@
-{% extends "energi/base.html" %} {% block title %}DayaDesa - Daftar
-Laporan{%endblock %} {% block content %}
+{% extends "energi/base.html" %}
+{% block title %}DayaDesa - Daftar Laporan{% endblock %}
+{% block content %}
 <div class="container mx-auto px-4 py-10">
   <div class="mb-6">
     <h2 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100">
-      📋 Daftar Laporan Warga
+      &#128203; Daftar Laporan Warga
     </h2>
     <p class="text-slate-500 dark:text-slate-400">
       Keluhan & catatan energi dari masyarakat desa
     </p>
   </div>
 
-  <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm mb-8">
-    <form method="get" class="flex flex-wrap gap-4 items-end">
-      <div class="flex-1 min-w-[180px]">
-        <label class="block text-sm font-medium mb-1">Cari Laporan</label>
+  <div class="mb-8 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
+    <form method="get" class="flex flex-wrap items-end gap-4">
+      <div class="min-w-[180px] flex-1">
+        <label class="mb-1 block text-sm font-medium">Cari Laporan</label>
         <input
           type="text"
           name="q"
           value="{{ q|default:'' }}"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
           placeholder="Cari desa, pelapor, atau isi"
         />
       </div>
       <div class="w-44">
-        <label class="block text-sm font-medium mb-1">Kategori</label>
+        <label class="mb-1 block text-sm font-medium">Kategori</label>
         <select
           name="kategori"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         >
           <option value="">Semua Kategori</option>
           {% for value, label in kategori_choices %}
-          <option
-            value="{{ value }}"
-            {%
-            if
-            value=""
-            ="kategori"
-            %}selected{%
-            endif
-            %}
-          >
+          <option value="{{ value }}" {% if value == kategori %}selected{% endif %}>
             {{ label }}
           </option>
           {% endfor %}
         </select>
       </div>
       <div class="w-44">
-        <label class="block text-sm font-medium mb-1">Status</label>
+        <label class="mb-1 block text-sm font-medium">Status</label>
         <select
           name="status"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
         >
           <option value="">Semua Status</option>
           {% for value, label in status_choices %}
-          <option
-            value="{{ value }}"
-            {%
-            if
-            value=""
-            ="status"
-            %}selected{%
-            endif
-            %}
-          >
+          <option value="{{ value }}" {% if value == status %}selected{% endif %}>
             {{ label }}
           </option>
           {% endfor %}
@@ -71,7 +54,7 @@ Laporan{%endblock %} {% block content %}
       <div>
         <button
           type="submit"
-          class="bg-teal-600 hover:bg-teal-700 text-white px-5 py-2 rounded-xl"
+          class="rounded-xl bg-teal-600 px-5 py-2 text-white transition hover:bg-teal-700"
         >
           Terapkan
         </button>
@@ -80,28 +63,28 @@ Laporan{%endblock %} {% block content %}
   </div>
 
   {% if laporan_list %}
-  <div class="grid md:grid-cols-2 gap-6">
+  <div class="grid gap-6 md:grid-cols-2">
     {% for laporan in laporan_list %}
-    <div
-      class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border-l-4 border-teal-400 p-5"
-    >
-      <div class="flex justify-between items-start">
-        <h3 class="font-bold text-lg">{{ laporan.desa.nama_desa }}</h3>
+    <article class="rounded-2xl border-l-4 border-teal-400 bg-white p-5 shadow-sm dark:bg-slate-800">
+      <div class="flex items-start justify-between gap-4">
+        <h3 class="text-lg font-bold">{{ laporan.desa.nama_desa }}</h3>
         <span
-          class="text-xs font-semibold px-2 py-1 rounded-full {% if laporan.status == 'Baru' %}bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200 {% elif laporan.status == 'Diproses' %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200 {% else %}bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200{% endif %}"
+          class="inline-flex rounded-full px-2 py-1 text-xs font-semibold
+          {% if laporan.status == 'Baru' %}bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200
+          {% elif laporan.status == 'Diproses' %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200
+          {% else %}bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200{% endif %}"
         >
           {{ laporan.status }}
         </span>
       </div>
-      <p class="text-slate-500 dark:text-slate-400 text-sm">
+      <p class="text-sm text-slate-500 dark:text-slate-400">
         {{ laporan.desa.kecamatan }}, {{ laporan.desa.kabupaten }}
       </p>
       <div class="mt-2 space-y-1 text-sm">
         <p><strong>Pelapor:</strong> {{ laporan.nama_pelapor }}</p>
         <p><strong>Kategori:</strong> {{ laporan.kategori_laporan }}</p>
         <p>
-          <strong>Tanggal:</strong> {{ laporan.tanggal_laporan|date:"d M Y H:i"
-          }}
+          <strong>Tanggal:</strong> {{ laporan.tanggal_laporan|date:"d M Y H:i" }}
         </p>
       </div>
       <hr class="my-3 border-emerald-100 dark:border-slate-700" />
@@ -110,16 +93,15 @@ Laporan{%endblock %} {% block content %}
       </p>
       <a
         href="{% url 'detail_desa' laporan.desa.id %}"
-        class="inline-block mt-4 text-teal-600 dark:text-teal-400 font-medium text-sm hover:underline"
-        >Lihat Desa →</a
+        class="mt-4 inline-block text-sm font-medium text-teal-600 hover:underline dark:text-teal-400"
       >
-    </div>
+        Lihat Desa &rarr;
+      </a>
+    </article>
     {% endfor %}
   </div>
   {% else %}
-  <div
-    class="text-center p-8 bg-amber-50 dark:bg-amber-900/20 rounded-2xl text-amber-600 dark:text-amber-400"
-  >
+  <div class="rounded-2xl bg-amber-50 p-8 text-center text-amber-600 dark:bg-amber-900/20 dark:text-amber-400">
     Belum ada laporan.
   </div>
   {% endif %}
