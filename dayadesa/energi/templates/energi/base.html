@@ -11,268 +11,488 @@
       {% block title %}DayaDesa &bull; Energi Desa Berkelanjutan{% endblock %}
     </title>
 
-    <!-- Tailwind CSS + Font Inter -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display&display=swap"
       rel="stylesheet"
     />
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
 
     {% include "energi/partials/theme_assets.html" %}
 
     <style>
+      :root {
+        --sage: #7aad8c;
+        --sage-light: #e8f4ec;
+        --sage-mid: #b8d9c2;
+        --mint: #a8d5ba;
+        --cream: #faf8f4;
+        --warm-white: #ffffff;
+        --sand: #f5f0e8;
+        --text-main: #3d4a40;
+        --text-muted: #7a8c7e;
+        --border-soft: #ddeee3;
+        --teal-soft: #5b9e7b;
+        --teal-deep: #2d7a55;
+        --amber-soft: #e8a87c;
+        --rose-soft: #e8a0a0;
+      }
+
       body {
-        font-family: "Inter", system-ui, sans-serif;
+        font-family: "Plus Jakarta Sans", sans-serif;
+        background: var(--cream);
+        color: var(--text-main);
       }
-      .card-hover {
-        transition: all 0.25s ease;
+
+      .navbar-glass {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(122, 173, 140, 0.18);
+        box-shadow: 0 2px 20px rgba(93, 143, 113, 0.08);
       }
-      .card-hover:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+
+      .nav-link {
+        padding: 0.45rem 1rem;
+        border-radius: 2rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        transition: all 0.2s ease;
+        white-space: nowrap;
       }
-      .fade-in {
-        animation: fadeInUp 0.4s ease-out;
+      .nav-link:hover {
+        background: var(--sage-light);
+        color: var(--teal-deep);
       }
-      @keyframes fadeInUp {
+      .nav-link.active {
+        background: var(--sage-light);
+        color: var(--teal-deep);
+        font-weight: 600;
+      }
+
+      .card-soft {
+        background: var(--warm-white);
+        border-radius: 20px;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 2px 16px rgba(93, 143, 113, 0.06);
+        transition:
+          box-shadow 0.25s,
+          transform 0.25s;
+      }
+      .card-soft:hover {
+        box-shadow: 0 8px 32px rgba(93, 143, 113, 0.12);
+        transform: translateY(-2px);
+      }
+
+      .btn-primary {
+        background: var(--teal-soft);
+        color: white;
+        padding: 0.6rem 1.4rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
+        display: inline-block;
+      }
+      .btn-primary:hover {
+        background: var(--teal-deep);
+        box-shadow: 0 4px 16px rgba(91, 158, 123, 0.3);
+      }
+
+      .btn-soft {
+        background: var(--sage-light);
+        color: var(--teal-deep);
+        padding: 0.6rem 1.4rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+        display: inline-block;
+      }
+      .btn-soft:hover {
+        background: var(--sage-mid);
+      }
+
+      .input-soft {
+        background: var(--cream);
+        border: 1.5px solid var(--border-soft);
+        border-radius: 12px;
+        padding: 0.65rem 1rem;
+        color: var(--text-main);
+        font-size: 0.9rem;
+        transition:
+          border 0.2s,
+          box-shadow 0.2s;
+        width: 100%;
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+      .input-soft:focus {
+        outline: none;
+        border-color: var(--sage);
+        box-shadow: 0 0 0 3px rgba(122, 173, 140, 0.15);
+        background: white;
+      }
+
+      .badge-krisis {
+        background: #fde8e8;
+        color: #b84444;
+      }
+      .badge-transisi {
+        background: #fef3e2;
+        color: #b06d28;
+      }
+      .badge-mandiri {
+        background: #e3f5ea;
+        color: #2d7a55;
+      }
+      .badge {
+        padding: 0.2rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-block;
+      }
+
+      .fade-up {
+        animation: fadeUp 0.5s ease both;
+      }
+      @keyframes fadeUp {
         from {
           opacity: 0;
-          transform: translateY(12px);
+          transform: translateY(16px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
+      .stagger-1 {
+        animation-delay: 0.05s;
+      }
+      .stagger-2 {
+        animation-delay: 0.1s;
+      }
+      .stagger-3 {
+        animation-delay: 0.15s;
+      }
+      .stagger-4 {
+        animation-delay: 0.2s;
+      }
+
+      .hero-gradient {
+        background: linear-gradient(
+          135deg,
+          #5b9e7b 0%,
+          #3d7a5f 40%,
+          #2a5e47 100%
+        );
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+      }
+
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--sage-light);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--sage-mid);
+        border-radius: 4px;
+      }
+
+      html.dark body {
+        background: #0e1a14;
+        color: #d1e8d8;
+      }
+      html.dark .navbar-glass {
+        background: rgba(14, 26, 20, 0.88);
+        border-color: rgba(122, 173, 140, 0.12);
+      }
+      html.dark .card-soft {
+        background: #162018;
+        border-color: #2a3d2e;
+      }
+      html.dark .input-soft {
+        background: #162018;
+        border-color: #2a3d2e;
+        color: #d1e8d8;
+      }
+      html.dark .input-soft:focus {
+        background: #1a2820;
+      }
+      html.dark .hero-gradient {
+        background: linear-gradient(
+          135deg,
+          #2d5e44 0%,
+          #1e4433 40%,
+          #142e23 100%
+        );
+      }
+      html.dark .nav-link {
+        color: #8dbbaa;
+      }
+      html.dark .nav-link:hover,
+      html.dark .nav-link.active {
+        background: #1e3328;
+        color: #a8d9b8;
+      }
+      html.dark .badge-krisis {
+        background: #3d1e1e;
+        color: #e88888;
+      }
+      html.dark .badge-transisi {
+        background: #3d2e1e;
+        color: #e8b478;
+      }
+      html.dark .badge-mandiri {
+        background: #1e3d28;
+        color: #78d8a8;
+      }
+      html.dark .btn-soft {
+        background: #1e3328;
+        color: #a8d9b8;
+      }
+      html.dark .btn-soft:hover {
+        background: #263e30;
+      }
     </style>
+
     {% block extra_css %}{% endblock %}
   </head>
-  <body
-    class="bg-gradient-to-b from-white to-emerald-50/40 dark:from-slate-900 dark:to-slate-800 text-slate-700 dark:text-slate-200 transition-colors duration-300"
-  >
+  <body>
     {% block navbar %}
-    <nav
-      class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-emerald-100 dark:border-slate-700 shadow-sm"
-    >
+    <nav class="sticky top-0 z-50 navbar-glass">
       <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-wrap items-center justify-between py-3">
+        <div class="flex items-center justify-between py-3 gap-3">
           <a
             href="{% url 'dashboard' %}"
-            class="flex items-center gap-2 text-xl font-extrabold tracking-tight text-teal-800 dark:text-teal-300"
+            class="flex items-center gap-2.5 shrink-0"
           >
-            <span
-              class="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-600 to-emerald-500 text-white flex items-center justify-center shadow-md"
-              >D</span
+            <div
+              class="w-9 h-9 rounded-xl hero-gradient flex items-center justify-center shadow-md"
             >
-            <span>DayaDesa</span>
+              <i class="fa-solid fa-leaf text-white text-sm"></i>
+            </div>
+            <span class="text-lg font-bold" style="color: var(--teal-deep)"
+              >DayaDesa</span
+            >
           </a>
+
           <button
             type="button"
             id="mobile-menu-btn"
-            class="lg:hidden rounded-lg p-2 text-teal-700 dark:text-teal-300 hover:bg-emerald-50 dark:hover:bg-slate-700"
+            class="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center"
+            style="background: var(--sage-light); color: var(--teal-deep)"
           >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <i class="fa-solid fa-bars text-sm"></i>
           </button>
-          <div
-            class="hidden lg:flex lg:items-center lg:gap-1 w-full lg:w-auto mt-4 lg:mt-0"
-            id="mainNavbar"
-          >
-            <div class="flex flex-col lg:flex-row lg:items-center gap-1">
-              {% with active_url=request.resolver_match.url_name %}
-              <a
-                href="{% url 'dashboard' %}"
-                class="nav-link-base {% if active_url == 'dashboard' %}nav-active{% else %}nav-inactive{% endif %}"
-                >Dashboard</a
-              >
-              <a
-                href="{% url 'peta_energi' %}"
-                class="nav-link-base {% if active_url == 'peta_energi' %}nav-active{% else %}nav-inactive{% endif %}"
-                >Peta Energi</a
-              >
-              <a
-                href="{% url 'indeks_desa' %}"
-                class="nav-link-base {% if active_url == 'indeks_desa' %}nav-active{% else %}nav-inactive{% endif %}"
-                >Indeks Desa</a
-              >
-              <a
-                href="{% url 'buat_laporan' %}"
-                class="nav-link-base {% if active_url == 'buat_laporan' %}nav-active{% else %}nav-inactive{% endif %}"
-                >Buat Laporan</a
-              >
-              <a
-                href="{% url 'daftar_laporan' %}"
-                class="nav-link-base {% if active_url == 'daftar_laporan' %}nav-active{% else %}nav-inactive{% endif %}"
-                >Daftar Laporan</a
-              >
-              <a
-                href="{% url 'tentang' %}"
-                class="nav-link-base {% if active_url == 'tentang' %}nav-active{% else %}nav-inactive{% endif %}"
-                >Tentang</a
-              >
-              {% endwith %}
-            </div>
-            <div
-              class="flex items-center gap-2 mt-4 lg:mt-0 lg:ml-4 border-t lg:border-0 pt-4 lg:pt-0 border-emerald-100 dark:border-slate-700"
+
+          <div class="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            {% with active_url=request.resolver_match.url_name %}
+            <a
+              href="{% url 'dashboard' %}"
+              class="nav-link {% if active_url == 'dashboard' %}active{% endif %}"
+              ><i class="fa-solid fa-house-chimney mr-1.5"></i>Dashboard</a
             >
-              {% if request.user.is_authenticated %}
-              <span
-                class="bg-emerald-100 dark:bg-emerald-900/40 text-teal-800 dark:text-teal-200 text-sm font-semibold px-4 py-2 rounded-full"
-                >{{ request.user.first_name|default:request.user.username
-                }}</span
-              >
-              <a
-                href="{% url 'logout_anggota' %}"
-                class="px-4 py-2 rounded-full border border-emerald-200 dark:border-slate-600 text-teal-700 dark:text-teal-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition"
-                >Keluar</a
-              >
-              {% else %}
-              <a
-                href="{% url 'login_anggota' %}"
-                class="px-5 py-2 rounded-full text-teal-700 dark:text-teal-300 hover:bg-emerald-50 dark:hover:bg-slate-700 transition"
-                >Login</a
-              >
-              <a
-                href="{% url 'daftar_anggota' %}"
-                class="px-5 py-2 rounded-full bg-teal-600 text-white shadow-sm hover:bg-teal-700 transition"
-                >Daftar</a
-              >
-              {% endif %} {% include "energi/partials/theme_toggle.html" %}
-            </div>
+            <a
+              href="{% url 'peta_energi' %}"
+              class="nav-link {% if active_url == 'peta_energi' %}active{% endif %}"
+              ><i class="fa-solid fa-map-location-dot mr-1.5"></i>Peta Energi</a
+            >
+            <a
+              href="{% url 'indeks_desa' %}"
+              class="nav-link {% if active_url == 'indeks_desa' %}active{% endif %}"
+              ><i class="fa-solid fa-chart-simple mr-1.5"></i>Indeks Desa</a
+            >
+            <a
+              href="{% url 'buat_laporan' %}"
+              class="nav-link {% if active_url == 'buat_laporan' %}active{% endif %}"
+              ><i class="fa-solid fa-file-pen mr-1.5"></i>Buat Laporan</a
+            >
+            <a
+              href="{% url 'daftar_laporan' %}"
+              class="nav-link {% if active_url == 'daftar_laporan' %}active{% endif %}"
+              ><i class="fa-solid fa-list-check mr-1.5"></i>Daftar Laporan</a
+            >
+            <a
+              href="{% url 'forum' %}"
+              class="nav-link {% if active_url == 'forum' or active_url == 'forum_detail' %}active{% endif %}"
+              ><i class="fa-solid fa-comments mr-1.5"></i>Forum</a
+            >
+            <a
+              href="{% url 'tentang' %}"
+              class="nav-link {% if active_url == 'tentang' %}active{% endif %}"
+              ><i class="fa-solid fa-circle-info mr-1.5"></i>Tentang</a
+            >
+            {% endwith %}
+          </div>
+
+          <div class="hidden lg:flex items-center gap-2 shrink-0">
+            {% if request.user.is_authenticated %}
+            <span
+              class="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold"
+              style="background: var(--sage-light); color: var(--teal-deep)"
+            >
+              <i class="fa-solid fa-circle-user"></i>{{
+              request.user.first_name|default:request.user.username }}
+            </span>
+            <a href="{% url 'logout_anggota' %}" class="nav-link">Keluar</a>
+            {% else %}
+            <a href="{% url 'login_anggota' %}" class="nav-link">Login</a>
+            <a href="{% url 'daftar_anggota' %}" class="btn-primary text-sm"
+              >Daftar</a
+            >
+            {% endif %} {% include "energi/partials/theme_toggle.html" %}
           </div>
         </div>
+
         <div
           id="mobileNav"
-          class="hidden lg:hidden pb-4 flex flex-col gap-2 border-t border-emerald-100 dark:border-slate-700 mt-2 pt-3"
+          class="hidden lg:hidden pb-4 pt-2 border-t flex flex-col gap-1"
+          style="border-color: var(--border-soft)"
         >
+          {% with active_url=request.resolver_match.url_name %}
           <a
             href="{% url 'dashboard' %}"
-            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
-            >Dashboard</a
+            class="nav-link {% if active_url == 'dashboard' %}active{% endif %}"
+            ><i class="fa-solid fa-house-chimney mr-2 w-4"></i>Dashboard</a
           >
           <a
             href="{% url 'peta_energi' %}"
-            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
-            >Peta Energi</a
+            class="nav-link {% if active_url == 'peta_energi' %}active{% endif %}"
+            ><i class="fa-solid fa-map-location-dot mr-2 w-4"></i>Peta Energi</a
           >
           <a
             href="{% url 'indeks_desa' %}"
-            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
-            >Indeks Desa</a
+            class="nav-link {% if active_url == 'indeks_desa' %}active{% endif %}"
+            ><i class="fa-solid fa-chart-simple mr-2 w-4"></i>Indeks Desa</a
           >
           <a
             href="{% url 'buat_laporan' %}"
-            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
-            >Buat Laporan</a
+            class="nav-link {% if active_url == 'buat_laporan' %}active{% endif %}"
+            ><i class="fa-solid fa-file-pen mr-2 w-4"></i>Buat Laporan</a
           >
           <a
             href="{% url 'daftar_laporan' %}"
-            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
-            >Daftar Laporan</a
+            class="nav-link {% if active_url == 'daftar_laporan' %}active{% endif %}"
+            ><i class="fa-solid fa-list-check mr-2 w-4"></i>Daftar Laporan</a
+          >
+          <a
+            href="{% url 'forum' %}"
+            class="nav-link {% if active_url == 'forum' or active_url == 'forum_detail' %}active{% endif %}"
+            ><i class="fa-solid fa-comments mr-2 w-4"></i>Forum Diskusi</a
           >
           <a
             href="{% url 'tentang' %}"
-            class="py-2 px-2 rounded-xl hover:bg-emerald-50 dark:hover:bg-slate-800"
-            >Tentang</a
+            class="nav-link {% if active_url == 'tentang' %}active{% endif %}"
+            ><i class="fa-solid fa-circle-info mr-2 w-4"></i>Tentang</a
           >
-          <hr class="my-1 border-emerald-100 dark:border-slate-700" />
-          {% if not request.user.is_authenticated %}
-          <a
-            href="{% url 'login_anggota' %}"
-            class="py-2 px-2 text-teal-700 dark:text-teal-300"
-            >Login</a
+          {% endwith %}
+          <div
+            class="flex gap-2 mt-2 pt-2 border-t"
+            style="border-color: var(--border-soft)"
           >
-          <a
-            href="{% url 'daftar_anggota' %}"
-            class="py-2 px-2 bg-teal-50 dark:bg-teal-900/30 text-teal-800 dark:text-teal-200 rounded-xl text-center"
-            >Daftar</a
-          >
-          {% else %}
-          <span
-            class="py-2 px-2 bg-emerald-100 dark:bg-emerald-900/40 rounded-xl text-center"
-            >{{ request.user.username }}</span
-          >
-          <a
-            href="{% url 'logout_anggota' %}"
-            class="py-2 px-2 text-red-600 dark:text-red-400"
-            >Keluar</a
-          >
-          {% endif %}
+            {% if request.user.is_authenticated %}
+            <span
+              class="flex-1 px-3 py-2 rounded-xl text-sm font-semibold text-center"
+              style="background: var(--sage-light); color: var(--teal-deep)"
+              >{{ request.user.username }}</span
+            >
+            <a
+              href="{% url 'logout_anggota' %}"
+              class="flex-1 px-3 py-2 rounded-xl text-sm text-center"
+              style="background: #fde8e8; color: #b84444"
+              >Keluar</a
+            >
+            {% else %}
+            <a
+              href="{% url 'login_anggota' %}"
+              class="flex-1 btn-soft text-center text-sm py-2"
+              >Login</a
+            >
+            <a
+              href="{% url 'daftar_anggota' %}"
+              class="flex-1 btn-primary text-center text-sm py-2"
+              >Daftar</a
+            >
+            {% endif %} {% include "energi/partials/theme_toggle.html" %}
+          </div>
         </div>
       </div>
     </nav>
-    <style>
-      .nav-link-base {
-        padding: 0.5rem 1rem;
-        border-radius: 2rem;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      .nav-active {
-        background: #d1fae5;
-        color: #0f766e;
-      }
-      .nav-inactive {
-        color: #4b5563;
-      }
-      .nav-inactive:hover {
-        background: #ecfdf5;
-        color: #0f766e;
-      }
-      html.dark .nav-active {
-        background: #115e59;
-        color: #ccfbf1;
-      }
-      html.dark .nav-inactive {
-        color: #cbd5e1;
-      }
-      html.dark .nav-inactive:hover {
-        background: #134e4a;
-        color: #bbf7d0;
-      }
-    </style>
     {% endblock %} {% if messages %}
-    <div class="container mx-auto px-4 pt-5">
+    <div class="container mx-auto px-4 pt-4">
       {% for message in messages %}
       <div
-        class="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-500 text-emerald-800 dark:text-emerald-200 p-4 rounded-2xl shadow-sm mb-3"
+        class="flex items-center gap-3 p-4 rounded-2xl mb-3 fade-up"
+        style="
+          background: var(--sage-light);
+          color: var(--teal-deep);
+          border-left: 4px solid var(--sage);
+        "
       >
-        {{ message }}
+        <i class="fa-solid fa-circle-check"></i>{{ message }}
       </div>
       {% endfor %}
     </div>
     {% endif %}
 
-    <main class="min-h-screen fade-in">{% block content %}{% endblock %}</main>
+    <main class="min-h-screen fade-up">{% block content %}{% endblock %}</main>
+
+    <footer
+      class="mt-16 py-8 text-center text-sm"
+      style="
+        background: var(--sand);
+        color: var(--text-muted);
+        border-top: 1px solid var(--border-soft);
+      "
+    >
+      <div class="flex items-center justify-center gap-2 mb-1">
+        <i class="fa-solid fa-leaf" style="color: var(--sage)"></i>
+        <span class="font-semibold" style="color: var(--teal-deep)"
+          >DayaDesa</span
+        >
+      </div>
+      <p>© 2025 Sistem Informasi Ketahanan Energi Desa Berkelanjutan</p>
+    </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
       (function () {
-        const btn = document.getElementById("mobile-menu-btn");
-        const mobileNav = document.getElementById("mobileNav");
-        if (btn && mobileNav)
-          btn.addEventListener("click", () =>
-            mobileNav.classList.toggle("hidden"),
-          );
+        var btn = document.getElementById("mobile-menu-btn");
+        var mobileNav = document.getElementById("mobileNav");
+        if (btn && mobileNav) {
+          btn.addEventListener("click", function () {
+            mobileNav.classList.toggle("hidden");
+          });
+        }
       })();
     </script>
-    {% block extra_js %}{% endblock %}
+
+    {% block extra_js %}
+    {% endblock %}
+
     {% include "energi/partials/theme_script.html" %}
-</body>
+  </body>
 </html>

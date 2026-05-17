@@ -1,0 +1,25 @@
+<script>
+  // Inisialisasi tema sebelum halaman dimuat (hindari flash)
+  (function () {
+    const savedTheme = localStorage.getItem("dayadesa-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const theme = savedTheme || (prefersDark ? "dark" : "light");
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
+
+<style>
+  /* Transisi halus untuk dark mode */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill;
+    transition-duration: 0.25s;
+    transition-timing-function: ease;
+  }
+  /* Kecualikan animasi agar tidak konflik */
+  .fade-up { transition: none !important; }
+</style>

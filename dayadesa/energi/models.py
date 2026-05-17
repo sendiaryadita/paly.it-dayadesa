@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class Desa(models.Model):
@@ -86,3 +87,37 @@ class CitizenReport(models.Model):
 
     def __str__(self):
         return f"{self.nama_pelapor} - {self.desa.nama_desa}"
+
+class TopikForum(models.Model):
+    KATEGORI_CHOICES = [
+        ("Energi", "Energi"),
+        ("Laporan", "Laporan"),
+        ("Umum", "Umum"),
+    ]
+
+    judul = models.CharField(max_length=200)
+    isi = models.TextField()
+    kategori = models.CharField(max_length=50, choices=KATEGORI_CHOICES, default="Umum")
+    penulis = models.ForeignKey(User, on_delete=models.CASCADE, related_name="topik_forum")
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+    diperbarui_pada = models.DateTimeField(auto_now=True)
+    pinned = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ["-pinned", "-dibuat_pada"]
+
+    def __str__(self):
+        return self.judul
+
+
+class BalasanForum(models.Model):
+    topik = models.ForeignKey(TopikForum, on_delete=models.CASCADE, related_name="balasan")
+    isi = models.TextField()
+    penulis = models.ForeignKey(User, on_delete=models.CASCADE, related_name="balasan_forum")
+    dibuat_pada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["dibuat_pada"]
+
+    def __str__(self):
+        return f"Balasan oleh {self.penulis.username} pada {self.topik.judul}"

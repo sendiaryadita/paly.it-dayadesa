@@ -1,3 +1,35 @@
+{% extends "energi/base.html" %} {% block title %}Indeks Desa – DayaDesa
+{%endblock %} {% block extra_css %}
+<style>
+  .filter-bar {
+    background: var(--warm-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+  }
+  .table-row {
+    transition: background 0.15s;
+    cursor: default;
+  }
+  .table-row:hover {
+    background: var(--sage-light);
+  }
+  .sort-btn {
+    cursor: pointer;
+    user-select: none;
+  }
+  .sort-btn:hover {
+    color: var(--teal-deep);
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="mb-6 fade-up">
+    <h2 class="text-3xl font-black" style="color: var(--text-main)">
+      <i class="fa-solid fa-chart-simple mr-2" style="color: var(--sage)"></i
+      >Indeks Ketahanan Energi Desa
+
 {% extends "energi/base.html" %}
 {% block title %}DayaDesa - Indeks Desa{% endblock %}
 {% block content %}
@@ -5,11 +37,36 @@
   <div class="mb-6">
     <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
       &#128202; Indeks Ketahanan Energi Desa
+
     </h2>
-    <p class="text-slate-500 dark:text-slate-400">
-      Skor ESI berdasarkan 4 pilar
+    <p class="mt-1" style="color: var(--text-muted)">
+      Skor ESI berdasarkan 4 pilar: Ketersediaan, Keterjangkauan, Keberlanjutan,
+      Keandalan
     </p>
   </div>
+
+
+  <!-- Filter Bar -->
+  <div
+    class="filter-bar mb-6 flex flex-wrap gap-3 items-center fade-up stagger-1"
+  >
+    <div class="relative flex-1 min-w-48">
+      <i
+        class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm"
+        style="color: var(--text-muted)"
+      ></i>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Cari desa atau kecamatan…"
+        class="input-soft pl-9"
+        style="background: var(--cream)"
+      />
+    </div>
+    <select
+      id="kategoriFilter"
+      class="input-soft"
+      style="width: auto; min-width: 160px; background: var(--cream)"
 
   <div class="mb-8 flex flex-wrap gap-4 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
     <input
@@ -21,25 +78,93 @@
     <select
       id="kategoriFilter"
       class="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
+
     >
       <option value="">Semua Kategori</option>
-      <option value="Krisis Energi">Krisis</option>
-      <option value="Transisi Energi">Transisi</option>
-      <option value="Mandiri Energi">Mandiri</option>
+      <option value="Krisis Energi">🔴 Krisis</option>
+      <option value="Transisi Energi">🟡 Transisi</option>
+      <option value="Mandiri Energi">🟢 Mandiri</option>
     </select>
+
+    <button id="resetFilter" class="btn-soft text-sm px-4">
+      <i class="fa-solid fa-rotate-left mr-1.5"></i>Reset
+
     <button
       id="resetFilter"
       class="rounded-xl bg-slate-200 px-5 text-slate-700 dark:bg-slate-700 dark:text-slate-300"
     >
       Reset
+
     </button>
+    <div class="ml-auto text-sm" style="color: var(--text-muted)">
+      <span id="countVisible">{{ desa_list|length }}</span> desa ditampilkan
+    </div>
   </div>
 
+
+  <!-- Table -->
+  <div class="card-soft overflow-hidden fade-up stagger-2">
+
   <div class="overflow-hidden rounded-2xl bg-white shadow dark:bg-slate-800">
+
     <div class="overflow-x-auto">
       <table class="min-w-full text-sm">
-        <thead class="bg-emerald-50 dark:bg-slate-700">
+        <thead style="background: var(--sage-light)">
           <tr>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Desa
+            </th>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Lokasi
+            </th>
+            <th
+              class="p-3 text-left font-semibold sort-btn"
+              style="color: var(--teal-deep)"
+            >
+              ESI ↕
+            </th>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Kategori
+            </th>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Ketersediaan
+            </th>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Keterjangkauan
+            </th>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Keberlanjutan
+            </th>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Keandalan
+            </th>
+            <th
+              class="p-3 text-left font-semibold"
+              style="color: var(--teal-deep)"
+            >
+              Aksi
+            </th>
             <th class="p-3 text-left">Desa</th>
             <th class="p-3 text-left">Lokasi</th>
             <th class="p-3 text-left">ESI</th>
@@ -54,10 +179,35 @@
         <tbody id="desaTableBody">
           {% for desa in desa_list %}
           <tr
+            class="desa-row table-row border-t"
+            style="border-color: var(--border-soft)"
+
             class="desa-row border-b border-slate-100 dark:border-slate-700"
+
             data-search="{{ desa.nama_desa }} {{ desa.kecamatan }} {{ desa.kabupaten }}"
             data-kategori="{{ desa.kategori_esi }}"
+            data-esi="{{ desa.esi_score }}"
           >
+
+            <td class="p-3 font-semibold" style="color: var(--text-main)">
+              {{ desa.nama_desa }}
+            </td>
+            <td class="p-3 text-xs" style="color: var(--text-muted)">
+              {{ desa.kecamatan }}, {{ desa.kabupaten }}
+            </td>
+            <td class="p-3 font-bold" style="color: var(--teal-deep)">
+              {{ desa.esi_score|floatformat:2 }}
+            </td>
+            <td class="p-3">
+              {% if desa.kategori_esi == "Krisis Energi" %}
+              <span class="badge badge-krisis">Krisis</span>
+              {% elif desa.kategori_esi == "Transisi Energi" %}
+              <span class="badge badge-transisi">Transisi</span>
+              {% else %}
+              <span class="badge badge-mandiri">Mandiri</span>
+              {% endif %}
+            </td>
+
             <td class="p-3 font-semibold">{{ desa.nama_desa }}</td>
             <td class="p-3">{{ desa.kecamatan }}, {{ desa.kabupaten }}</td>
             <td class="p-3 font-bold">{{ desa.esi_score|floatformat:2 }}</td>
@@ -70,6 +220,7 @@
               <span class="rounded-full bg-green-100 px-2 py-0.5 text-green-700">Mandiri</span>
               {% endif %}
             </td>
+
             <td class="p-3">{{ desa.ketersediaan_energi }}</td>
             <td class="p-3">{{ desa.keterjangkauan_energi }}</td>
             <td class="p-3">{{ desa.keberlanjutan_energi }}</td>
@@ -77,7 +228,11 @@
             <td class="p-3">
               <a
                 href="{% url 'detail_desa' desa.id %}"
+
+                class="badge badge-mandiri text-xs"
+                >Detail →</a
                 class="text-teal-600 underline"
+
               >
                 Detail
               </a>
@@ -85,12 +240,28 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="9" class="p-6 text-center">Belum ada data.</td>
+            <td
+              colspan="9"
+              class="p-10 text-center"
+              style="color: var(--text-muted)"
+            >
+              <i class="fa-solid fa-database text-3xl mb-3 block opacity-30"></i
+              >Belum ada data desa.
+            </td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
+    <div
+      id="emptyMessage"
+      class="hidden text-center p-8"
+      style="color: var(--text-muted)"
+    >
+      <i
+        class="fa-solid fa-magnifying-glass text-3xl mb-3 block opacity-30"
+      ></i>
+      Data tidak ditemukan untuk filter ini.
     <div id="emptyMessage" class="hidden p-6 text-center text-amber-600">
       Data tidak ditemukan.
     </div>
@@ -104,7 +275,21 @@
     const kat = document.getElementById("kategoriFilter");
     const reset = document.getElementById("resetFilter");
     const empty = document.getElementById("emptyMessage");
+    const count = document.getElementById("countVisible");
 
+    function filter() {
+      const kw = search.value.toLowerCase().trim();
+      const k = kat.value;
+      let vis = 0;
+      rows.forEach((r) => {
+        const match =
+          r.dataset.search.toLowerCase().includes(kw) &&
+          (k === "" || r.dataset.kategori === k);
+        r.style.display = match ? "" : "none";
+        if (match) vis++;
+      });
+      count.textContent = vis;
+      empty.classList.toggle("hidden", vis > 0);
     function filter() {
       const kw = search.value.toLowerCase().trim();
       const kategori = kat.value;

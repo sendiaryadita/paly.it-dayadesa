@@ -1,3 +1,38 @@
+{% extends "energi/base.html" %} {% block title %}Daftar Laporan – DayaDesa
+{%endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8">
+  <div class="flex items-center justify-between mb-6 fade-up">
+    <div>
+      <h2 class="text-3xl font-black" style="color: var(--text-main)">
+        <i class="fa-solid fa-list-check mr-2" style="color: var(--sage)"></i
+        >Daftar Laporan Warga
+      </h2>
+      <p class="mt-1" style="color: var(--text-muted)">
+        Semua laporan kondisi energi dari warga desa
+      </p>
+    </div>
+    <a href="{% url 'buat_laporan' %}" class="btn-primary text-sm">
+      <i class="fa-solid fa-plus mr-1.5"></i>Buat Laporan
+    </a>
+  </div>
+
+  {% if laporan_list %}
+  <div class="grid md:grid-cols-2 gap-4">
+    {% for laporan in laporan_list %}
+    <div class="card-soft p-5 fade-up">
+      <div class="flex justify-between items-start mb-3">
+        <div>
+          <div class="font-bold" style="color: var(--text-main)">
+            {{ laporan.desa.nama_desa }}
+          </div>
+          <div class="text-xs mt-0.5" style="color: var(--text-muted)">
+            <i class="fa-solid fa-user mr-1"></i>{{ laporan.nama_pelapor }}
+            &nbsp;·&nbsp; <i class="fa-solid fa-tag mr-1"></i>{{
+            laporan.kategori_laporan }}
+          </div>
+        </div>
+        <span
+          class="badge {% if laporan.status == 'Baru' %}badge-mandiri{% elif laporan.status == 'Diproses' %}badge-transisi{% else %}badge-mandiri{% endif %}"
 {% extends "energi/base.html" %}
 {% block title %}DayaDesa - Daftar Laporan{% endblock %}
 {% block content %}
@@ -77,6 +112,39 @@
           {{ laporan.status }}
         </span>
       </div>
+      <p class="text-sm leading-relaxed" style="color: var(--text-main)">
+        {{ laporan.isi_laporan|truncatewords:25 }}
+      </p>
+      <div
+        class="mt-3 pt-3 text-xs"
+        style="
+          color: var(--text-muted);
+          border-top: 1px solid var(--border-soft);
+        "
+      >
+        <i class="fa-solid fa-clock mr-1"></i>{{ laporan.tanggal_laporan|date:"d
+        M Y" }}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card-soft p-12 text-center fade-up">
+    <i
+      class="fa-solid fa-inbox text-5xl mb-4 block"
+      style="color: var(--sage-mid)"
+    ></i>
+    <h3 class="font-bold text-lg mb-2" style="color: var(--text-main)">
+      Belum Ada Laporan
+    </h3>
+    <p class="text-sm mb-5" style="color: var(--text-muted)">
+      Jadilah yang pertama melaporkan kondisi energi desa Anda
+    </p>
+    <a
+      href="{% url 'buat_laporan' %}"
+      class="btn-primary inline-block px-8 py-2.5"
+      >Buat Laporan Pertama</a
+    >
       <p class="text-sm text-slate-500 dark:text-slate-400">
         {{ laporan.desa.kecamatan }}, {{ laporan.desa.kabupaten }}
       </p>

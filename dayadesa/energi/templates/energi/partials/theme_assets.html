@@ -2,9 +2,7 @@
   // Inisialisasi tema sebelum halaman dimuat (hindari flash)
   (function () {
     const savedTheme = localStorage.getItem("dayadesa-theme");
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)",
-    ).matches;
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const theme = savedTheme || (prefersDark ? "dark" : "light");
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -17,6 +15,10 @@
 
 <style>
   /* Transisi halus untuk dark mode */
+  *, *::before, *::after {
+    transition-property: background-color, border-color, color, fill;
+    transition-duration: 0.25s;
+    transition-timing-function: ease;
   * {
     transition:
       background-color 0.2s ease,
@@ -121,4 +123,6 @@
   html.dark .leaflet-popup-tip {
     background: #1e293b;
   }
+  /* Kecualikan animasi agar tidak konflik */
+  .fade-up { transition: none !important; }
 </style>
