@@ -46,6 +46,36 @@
     <div class="card-soft p-6 fade-up stagger-1">
       <div class="stat-icon mb-4" style="background: #fef3e2">
         <i class="fa-solid fa-trophy" style="color: #b06d28"></i>
+{% extends "energi/base.html" %}
+{% block content %}
+<div class="container mx-auto max-w-5xl px-4 py-12">
+  <div class="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
+    <h1 class="text-3xl font-bold text-teal-800 dark:text-teal-300">
+      &#127793; Tentang DayaDesa
+    </h1>
+    <p class="mt-2 text-slate-600 dark:text-slate-300">
+      Platform geospasial ketahanan energi desa berbasis partisipasi warga.
+    </p>
+
+    <div class="mt-6 grid gap-5 md:grid-cols-2">
+      <div>
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
+          Apa itu DayaDesa?
+        </h3>
+        <p class="mt-2 text-slate-600 dark:text-slate-300">
+          Sistem informasi visualisasi ESI (Energy Security Index) dengan 4
+          pilar: Ketersediaan, Keterjangkauan, Keberlanjutan, Keandalan.
+        </p>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
+          Manfaat
+        </h3>
+        <ul class="mt-2 list-disc space-y-1 pl-5 text-slate-600 dark:text-slate-300">
+          <li>Pemetaan kondisi energi desa</li>
+          <li>Laporan warga realtime</li>
+          <li>Rekomendasi kebijakan</li>
+        </ul>
       </div>
       <h3 class="font-bold text-lg mb-2" style="color: var(--text-main)">
         Manfaat Platform
@@ -117,6 +147,17 @@
         <div class="text-xs mt-1" style="color: var(--text-muted)">
           Energi baru terbarukan
         </div>
+
+    <div class="mt-8 rounded-xl bg-emerald-50 p-5 dark:bg-emerald-900/20">
+      <h3 class="font-bold text-slate-800 dark:text-slate-100">Alur Kerja</h3>
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-4 text-slate-600 dark:text-slate-300">
+        <div class="text-center">1. Input Data Desa</div>
+        <div>&rarr;</div>
+        <div>2. Hitung ESI</div>
+        <div>&rarr;</div>
+        <div>3. Peta &amp; Indeks</div>
+        <div>&rarr;</div>
+        <div>4. Citizen Report</div>
       </div>
       <div
         class="p-4 rounded-2xl text-center fade-up stagger-3"

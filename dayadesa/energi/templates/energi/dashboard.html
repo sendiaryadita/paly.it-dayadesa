@@ -1,5 +1,4 @@
 {% extends "energi/base.html" %}
-
 {% block title %}DayaDesa - Dashboard{% endblock %}
 
 {% block extra_css %}
@@ -160,6 +159,85 @@
     <div class="md:col-span-3 card-soft p-6">
       <h5 class="font-bold text-lg mb-4" style="color: var(--text-main);">
         <i class="fa-solid fa-chart-pie mr-2" style="color: var(--sage);"></i>
+
+{% block title %}DayaDesa - Dashboard{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8 md:py-12">
+  <div class="mb-10 rounded-3xl bg-gradient-to-r from-teal-700 to-emerald-600 p-6 text-white shadow-xl md:p-8">
+    <h1 class="text-3xl font-extrabold tracking-tight md:text-4xl">
+      Dashboard DayaDesa
+    </h1>
+    <p class="mt-2 max-w-2xl text-emerald-50">
+      Sistem informasi geospasial ketahanan energi desa, ESI, dan partisipasi
+      warga.
+    </p>
+  </div>
+
+  <div class="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div class="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+      <h6 class="text-sm font-semibold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">
+        Total Desa
+      </h6>
+      <h2 class="mt-1 text-4xl font-black text-slate-800 dark:text-white">
+        {{ jumlah_desa }}
+      </h2>
+      <p class="text-sm text-slate-400">Desa terpetakan</p>
+    </div>
+    <div class="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+      <h6 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+        Total Laporan
+      </h6>
+      <h2 class="text-4xl font-black text-slate-800 dark:text-white">
+        {{ jumlah_laporan }}
+      </h2>
+      <p class="text-sm text-slate-400">Citizen Report</p>
+    </div>
+    <div class="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+      <h6 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+        Rata-rata ESI
+      </h6>
+      <h2 class="text-4xl font-black text-slate-800 dark:text-white">
+        {{ rata_rata_esi|floatformat:2 }}
+      </h2>
+      <p class="text-sm text-slate-400">Skor ketahanan</p>
+    </div>
+    <div class="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-slate-700 dark:bg-slate-800">
+      <h6 class="text-sm font-semibold text-red-500">Desa Krisis</h6>
+      <h2 class="text-4xl font-black text-red-600 dark:text-red-400">
+        {{ jumlah_krisis }}
+      </h2>
+      <p class="text-sm text-slate-400">Prioritas pemantauan</p>
+    </div>
+  </div>
+
+  <div class="mb-10 grid gap-6 md:grid-cols-5">
+    <div class="rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800 md:col-span-2">
+      <h5 class="mb-4 text-xl font-bold text-slate-800 dark:text-white">
+        Kategori Ketahanan Energi
+      </h5>
+      <div class="space-y-3">
+        <div class="flex justify-between">
+          <span class="text-slate-600 dark:text-slate-300">Krisis Energi</span>
+          <span class="text-lg font-bold text-red-600">{{ jumlah_krisis }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-600 dark:text-slate-300">Transisi Energi</span>
+          <span class="text-lg font-bold text-amber-600">{{ jumlah_transisi }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-600 dark:text-slate-300">Mandiri Energi</span>
+          <span class="text-lg font-bold text-emerald-600">{{ jumlah_mandiri }}</span>
+        </div>
+      </div>
+      <a
+        href="{% url 'peta_energi' %}"
+        class="mt-6 block w-full rounded-xl bg-teal-600 py-2.5 text-center text-white transition hover:bg-teal-700"
+      >
+        Lihat Peta Energi &rarr;
+      </a>
+    </div>
+    <div class="rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800 md:col-span-3">
+      <h5 class="mb-3 text-xl font-bold text-slate-800 dark:text-white">
         Grafik Kategori ESI
       </h5>
       <div style="max-height: 280px; display: flex; justify-content: center;">
@@ -180,6 +258,11 @@
         </a>
       </div>
 
+  <div class="grid gap-6 lg:grid-cols-7">
+    <div class="rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800 lg:col-span-4">
+      <h5 class="mb-4 text-xl font-bold text-slate-800 dark:text-white">
+        Desa Prioritas (ESI Terendah)
+      </h5>
       {% if desa_prioritas %}
       <div class="overflow-x-auto rounded-xl" style="border: 1px solid var(--border-soft);">
         <table class="min-w-full text-sm">
@@ -201,7 +284,14 @@
               </td>
               <td class="p-3">
                 <a href="{% url 'detail_desa' desa.id %}" class="badge badge-mandiri text-xs">
-                  Detail →
+                  Detail 
+              <td class="p-3 font-bold">{{ desa.esi_score|floatformat:2 }}</td>
+              <td class="p-3">
+                <a
+                  href="{% url 'detail_desa' desa.id %}"
+                  class="rounded-full bg-teal-100 px-3 py-1 text-xs font-medium text-teal-800 dark:bg-teal-900/40 dark:text-teal-200"
+                >
+                  Detail
                 </a>
               </td>
             </tr>
@@ -219,6 +309,12 @@
     <div class="lg:col-span-3 card-soft p-6">
       <h5 class="font-bold text-lg mb-4" style="color: var(--text-main);">
         <i class="fa-solid fa-lightbulb mr-2" style="color: #e8a87c;"></i>
+      <div class="py-4 text-center text-slate-400">Belum ada data desa.</div>
+      {% endif %}
+    </div>
+
+    <div class="rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800 lg:col-span-3">
+      <h5 class="mb-3 text-xl font-bold text-slate-800 dark:text-white">
         Rekomendasi Aksi
       </h5>
 
@@ -241,6 +337,23 @@
           <div class="font-bold text-sm mb-1" style="color: #2d7a55;">Mandiri Energi</div>
           <p class="text-xs" style="color: #3a6b4f;">
             Jadikan sebagai contoh praktik baik yang berkelanjutan.
+        <div>
+          <div class="font-semibold text-red-600">Krisis Energi</div>
+          <p class="text-sm text-slate-500">
+            Prioritas pemantauan & peningkatan akses listrik.
+          </p>
+        </div>
+        <div>
+          <div class="font-semibold text-amber-600">Transisi Energi</div>
+          <p class="text-sm text-slate-500">
+            Arahkan pada keandalan pasokan & EBT desa.
+          </p>
+        </div>
+        <div>
+          <div class="font-semibold text-emerald-600">Mandiri Energi</div>
+          <p class="text-sm text-slate-500">
+            Jadi contoh praktik baik berkelanjutan.
+
           </p>
         </div>
       </div>
@@ -257,9 +370,12 @@
         Lihat semua
       </a>
     </div>
-
+  <div class="mt-10 rounded-2xl bg-white p-6 shadow-sm dark:bg-slate-800">
+    <h5 class="mb-4 text-xl font-bold text-slate-800 dark:text-white">
+      Laporan Warga Terbaru
+    </h5>
     {% if laporan_list %}
-    <div class="grid md:grid-cols-2 gap-4">
+    <div class="grid gap-4 md:grid-cols-2">
       {% for laporan in laporan_list %}
       <div class="laporan-card">
         <div class="flex justify-between items-start gap-2 mb-2">
@@ -276,9 +392,27 @@
         </p>
 
         <p class="text-sm" style="color: var(--text-main);">
+      <article class="rounded-xl border border-emerald-100 p-4 dark:border-slate-700">
+        <div class="flex items-start justify-between gap-4">
+          <strong class="text-slate-800 dark:text-slate-100">
+            {{ laporan.desa.nama_desa }}
+          </strong>
+          <span
+            class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold
+            {% if laporan.status == 'Baru' %}bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200
+            {% elif laporan.status == 'Diproses' %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200
+            {% else %}bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200{% endif %}"
+          >
+            {{ laporan.status }}
+          </span>
+        </div>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          {{ laporan.nama_pelapor }} &bull; {{ laporan.kategori_laporan }}
+        </p>
+        <p class="mt-2 text-sm text-slate-700 dark:text-slate-300">
           {{ laporan.isi_laporan|truncatewords:20 }}
         </p>
-      </div>
+      </article>
       {% endfor %}
     </div>
     {% else %}
@@ -287,12 +421,15 @@
       <a href="{% url 'buat_laporan' %}" class="btn-primary inline-block mt-4 text-sm">
         Buat Laporan Pertama
       </a>
+
+    <div class="rounded-xl bg-amber-50 p-4 text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
+      Belum ada laporan warga.
+
     </div>
     {% endif %}
   </div>
 </div>
 {% endblock %}
-
 {% block extra_js %}
 {{ jumlah_krisis|json_script:"krisis-data" }}
 {{ jumlah_transisi|json_script:"transisi-data" }}

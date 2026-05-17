@@ -207,7 +207,10 @@ def daftar_anggota(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.first_name = request.POST.get("first_name", "").strip()
+            user.email = request.POST.get("email", "").strip()
+            user.save()
             login(request, user)
             messages.success(request, "Akun berhasil dibuat.")
             return redirect("dashboard")

@@ -88,6 +88,110 @@
             placeholder="email@contoh.com"
           />
         </div>
+{% extends "energi/base.html" %} {% block title %}DayaDesa - Daftar
+Anggota{%endblock %} {% block content %}
+<div class="container mx-auto px-4 py-12 max-w-md">
+  <div
+    class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8 transition-colors"
+  >
+    <h2
+      class="text-2xl font-bold text-slate-800 dark:text-slate-100 text-center"
+    >
+      Daftar Anggota Baru
+    </h2>
+    <p class="text-slate-500 dark:text-slate-400 text-center mb-6">
+      Ikut berkontribusi untuk ketahanan energi desa
+    </p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div
+        class="mb-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-200"
+      >
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+
+      <!-- Username -->
+      <div class="mb-4">
+        <label
+          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
+          >Username</label
+        >
+        <input
+          type="text"
+          name="username"
+          value="{{ form.username.value|default:'' }}"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+          required
+        />
+        {% if form.username.errors %}
+        <p class="text-red-500 text-xs mt-1">{{ form.username.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Email (opsional) -->
+      <div class="mb-4">
+        <label
+          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
+          >Email (opsional)</label
+        >
+        <input
+          type="email"
+          name="email"
+          value="{{ request.POST.email|default:'' }}"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+        />
+      </div>
+
+      <!-- Nama depan (first_name) -->
+      <div class="mb-4">
+        <label
+          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
+          >Nama Lengkap</label
+        >
+        <input
+          type="text"
+          name="first_name"
+          value="{{ request.POST.first_name|default:'' }}"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+        />
+      </div>
+
+      <!-- Password1 -->
+      <div class="mb-4">
+        <label
+          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
+          >Password</label
+        >
+        <input
+          type="password"
+          name="password1"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+          required
+        />
+        {% if form.password1.errors %}
+        <p class="text-red-500 text-xs mt-1">{{ form.password1.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Password2 -->
+      <div class="mb-6">
+        <label
+          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
+          >Konfirmasi Password</label
+        >
+        <input
+          type="password"
+          name="password2"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+          required
+        />
+        {% if form.password2.errors %}
+        <p class="text-red-500 text-xs mt-1">{{ form.password2.errors.0 }}</p>
+        {% endif %}
+      </div>
 
         <div>
           <label

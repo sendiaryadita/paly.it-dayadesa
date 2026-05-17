@@ -77,6 +77,52 @@
       <div
         class="mt-6 pt-6 text-center"
         style="border-top: 1px solid var(--border-soft)"
+{% extends "energi/base.html" %}
+{% block title %}Login Anggota{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-16 max-w-md">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8">
+    <h2 class="text-2xl font-bold text-center">Masuk ke Akun</h2>
+    <form method="post" class="mt-6 space-y-4">
+      {% csrf_token %}
+      {% if form.non_field_errors %}
+      <div
+        class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-200"
+      >
+        {{ form.non_field_errors }}
+      </div>
+      {% endif %}
+      <div>
+        <label class="block font-medium">Username</label
+        ><input
+          type="text"
+          name="username"
+          value="{{ form.username.value|default:'' }}"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+          required
+        />
+      </div>
+      <div>
+        <label class="block font-medium">Password</label
+        ><input
+          type="password"
+          name="password"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        class="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-xl"
+      >
+        Login
+      </button>
+    </form>
+    <p class="text-center text-sm mt-4">
+      Belum punya akun?
+      <a href="{% url 'daftar_anggota' %}" class="text-teal-600 font-semibold"
+        >Daftar</a
+
       >
         <p class="text-sm" style="color: var(--text-muted)">
           Belum punya akun?
