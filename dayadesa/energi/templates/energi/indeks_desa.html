@@ -1,23 +1,15 @@
-{% extends "energi/base.html" %} {% block title %}Indeks Desa – DayaDesa
+{% extends "energi/base.html" %} {% block title %}DayaDesa - Indeks Desa
 {%endblock %} {% block extra_css %}
 <style>
-  .filter-bar {
-    background: var(--warm-white);
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
-    padding: 1rem 1.25rem;
-  }
-  .table-row {
-    transition: background 0.15s;
-    cursor: default;
-  }
   .table-row:hover {
-    background: var(--sage-light);
+    background-color: rgba(91, 158, 123, 0.06);
   }
+
   .sort-btn {
     cursor: pointer;
     user-select: none;
   }
+
   .sort-btn:hover {
     color: var(--teal-deep);
   }
@@ -27,212 +19,91 @@
   <!-- Header -->
   <div class="mb-6 fade-up">
     <h2 class="text-3xl font-black" style="color: var(--text-main)">
-      <i class="fa-solid fa-chart-simple mr-2" style="color: var(--sage)"></i
-      >Indeks Ketahanan Energi Desa
-
-{% extends "energi/base.html" %}
-{% block title %}DayaDesa - Indeks Desa{% endblock %}
-{% block content %}
-<div class="container mx-auto px-4 py-8">
-  <div class="mb-6">
-    <h2 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
-      &#128202; Indeks Ketahanan Energi Desa
-
+      <i class="fa-solid fa-chart-simple mr-2" style="color: var(--sage)"></i>
+      Indeks Ketahanan Energi Desa
     </h2>
+
     <p class="mt-1" style="color: var(--text-muted)">
       Skor ESI berdasarkan 4 pilar: Ketersediaan, Keterjangkauan, Keberlanjutan,
-      Keandalan
+      dan Keandalan
     </p>
   </div>
 
+  <!-- Filter -->
+  <div class="card-soft p-4 mb-5 fade-up">
+    <div class="flex flex-col md:flex-row gap-3">
+      <div class="flex-1">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Cari nama desa..."
+          class="input-soft w-full"
+        />
+      </div>
 
-  <!-- Filter Bar -->
-  <div
-    class="filter-bar mb-6 flex flex-wrap gap-3 items-center fade-up stagger-1"
-  >
-    <div class="relative flex-1 min-w-48">
-      <i
-        class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm"
-        style="color: var(--text-muted)"
-      ></i>
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Cari desa atau kecamatan…"
-        class="input-soft pl-9"
-        style="background: var(--cream)"
-      />
-    </div>
-    <select
-      id="kategoriFilter"
-      class="input-soft"
-      style="width: auto; min-width: 160px; background: var(--cream)"
-
-  <div class="mb-8 flex flex-wrap gap-4 rounded-2xl bg-white p-5 shadow-sm dark:bg-slate-800">
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Cari desa / kecamatan"
-      class="flex-1 rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
-    />
-    <select
-      id="kategoriFilter"
-      class="rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-
-    >
-      <option value="">Semua Kategori</option>
-      <option value="Krisis Energi">🔴 Krisis</option>
-      <option value="Transisi Energi">🟡 Transisi</option>
-      <option value="Mandiri Energi">🟢 Mandiri</option>
-    </select>
-
-    <button id="resetFilter" class="btn-soft text-sm px-4">
-      <i class="fa-solid fa-rotate-left mr-1.5"></i>Reset
-
-    <button
-      id="resetFilter"
-      class="rounded-xl bg-slate-200 px-5 text-slate-700 dark:bg-slate-700 dark:text-slate-300"
-    >
-      Reset
-
-    </button>
-    <div class="ml-auto text-sm" style="color: var(--text-muted)">
-      <span id="countVisible">{{ desa_list|length }}</span> desa ditampilkan
+      <div>
+        <select id="kategoriFilter" class="input-soft">
+          <option value="">Semua Kategori</option>
+          <option value="krisis">Krisis Energi</option>
+          <option value="transisi">Transisi Energi</option>
+          <option value="mandiri">Mandiri Energi</option>
+        </select>
+      </div>
     </div>
   </div>
 
-
   <!-- Table -->
-  <div class="card-soft overflow-hidden fade-up stagger-2">
-
-  <div class="overflow-hidden rounded-2xl bg-white shadow dark:bg-slate-800">
-
+  <div class="card-soft overflow-hidden fade-up">
     <div class="overflow-x-auto">
       <table class="min-w-full text-sm">
         <thead style="background: var(--sage-light)">
           <tr>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Desa
+            <th class="px-5 py-4 text-left">Nama Desa</th>
+
+            <th class="px-5 py-4 text-left">Kecamatan</th>
+
+            <th class="px-5 py-4 text-left sort-btn" onclick="sortTable()">
+              ESI Score
+              <i class="fa-solid fa-sort ml-1"></i>
             </th>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Lokasi
-            </th>
-            <th
-              class="p-3 text-left font-semibold sort-btn"
-              style="color: var(--teal-deep)"
-            >
-              ESI ↕
-            </th>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Kategori
-            </th>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Ketersediaan
-            </th>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Keterjangkauan
-            </th>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Keberlanjutan
-            </th>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Keandalan
-            </th>
-            <th
-              class="p-3 text-left font-semibold"
-              style="color: var(--teal-deep)"
-            >
-              Aksi
-            </th>
-            <th class="p-3 text-left">Desa</th>
-            <th class="p-3 text-left">Lokasi</th>
-            <th class="p-3 text-left">ESI</th>
-            <th class="p-3 text-left">Kategori</th>
-            <th class="p-3 text-left">Ketersediaan</th>
-            <th class="p-3 text-left">Keterjangkauan</th>
-            <th class="p-3 text-left">Keberlanjutan</th>
-            <th class="p-3 text-left">Keandalan</th>
-            <th class="p-3 text-left">Aksi</th>
+
+            <th class="px-5 py-4 text-left">Kategori</th>
+
+            <th class="px-5 py-4 text-left">Aksi</th>
           </tr>
         </thead>
-        <tbody id="desaTableBody">
+
+        <tbody id="desaTable">
           {% for desa in desa_list %}
           <tr
-            class="desa-row table-row border-t"
-            style="border-color: var(--border-soft)"
-
-            class="desa-row border-b border-slate-100 dark:border-slate-700"
-
-            data-search="{{ desa.nama_desa }} {{ desa.kecamatan }} {{ desa.kabupaten }}"
-            data-kategori="{{ desa.kategori_esi }}"
-            data-esi="{{ desa.esi_score }}"
+            class="table-row transition"
+            data-kategori="{{ desa.kategori_esi|lower }}"
+            style="border-top: 1px solid var(--border-soft)"
           >
+            <td class="px-5 py-4 font-semibold">{{ desa.nama_desa }}</td>
 
-            <td class="p-3 font-semibold" style="color: var(--text-main)">
-              {{ desa.nama_desa }}
-            </td>
-            <td class="p-3 text-xs" style="color: var(--text-muted)">
-              {{ desa.kecamatan }}, {{ desa.kabupaten }}
-            </td>
-            <td class="p-3 font-bold" style="color: var(--teal-deep)">
+            <td class="px-5 py-4">{{ desa.kecamatan }}</td>
+
+            <td class="px-5 py-4 font-bold">
               {{ desa.esi_score|floatformat:2 }}
             </td>
-            <td class="p-3">
+
+            <td class="px-5 py-4">
               {% if desa.kategori_esi == "Krisis Energi" %}
-              <span class="badge badge-krisis">Krisis</span>
+              <span class="badge badge-krisis">{{ desa.kategori_esi }}</span>
+
               {% elif desa.kategori_esi == "Transisi Energi" %}
-              <span class="badge badge-transisi">Transisi</span>
+              <span class="badge badge-transisi">{{ desa.kategori_esi }}</span>
+
               {% else %}
-              <span class="badge badge-mandiri">Mandiri</span>
+              <span class="badge badge-mandiri">{{ desa.kategori_esi }}</span>
               {% endif %}
             </td>
 
-            <td class="p-3 font-semibold">{{ desa.nama_desa }}</td>
-            <td class="p-3">{{ desa.kecamatan }}, {{ desa.kabupaten }}</td>
-            <td class="p-3 font-bold">{{ desa.esi_score|floatformat:2 }}</td>
-            <td class="p-3">
-              {% if desa.kategori_esi == "Krisis Energi" %}
-              <span class="rounded-full bg-red-100 px-2 py-0.5 text-red-700">Krisis</span>
-              {% elif desa.kategori_esi == "Transisi Energi" %}
-              <span class="rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">Transisi</span>
-              {% else %}
-              <span class="rounded-full bg-green-100 px-2 py-0.5 text-green-700">Mandiri</span>
-              {% endif %}
-            </td>
-
-            <td class="p-3">{{ desa.ketersediaan_energi }}</td>
-            <td class="p-3">{{ desa.keterjangkauan_energi }}</td>
-            <td class="p-3">{{ desa.keberlanjutan_energi }}</td>
-            <td class="p-3">{{ desa.keandalan_energi }}</td>
-            <td class="p-3">
+            <td class="px-5 py-4">
               <a
                 href="{% url 'detail_desa' desa.id %}"
-
-                class="badge badge-mandiri text-xs"
-                >Detail →</a
-                class="text-teal-600 underline"
-
+                class="btn-soft text-xs px-3 py-1.5"
               >
                 Detail
               </a>
@@ -240,81 +111,63 @@
           </tr>
           {% empty %}
           <tr>
-            <td
-              colspan="9"
-              class="p-10 text-center"
-              style="color: var(--text-muted)"
-            >
-              <i class="fa-solid fa-database text-3xl mb-3 block opacity-30"></i
-              >Belum ada data desa.
-            </td>
+            <td colspan="5" class="text-center py-10">Tidak ada data desa.</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    <div
-      id="emptyMessage"
-      class="hidden text-center p-8"
-      style="color: var(--text-muted)"
-    >
-      <i
-        class="fa-solid fa-magnifying-glass text-3xl mb-3 block opacity-30"
-      ></i>
-      Data tidak ditemukan untuk filter ini.
-    <div id="emptyMessage" class="hidden p-6 text-center text-amber-600">
-      Data tidak ditemukan.
-    </div>
   </div>
 </div>
-
+{% endblock %} {% block extra_js %}
 <script>
-  (function () {
-    const rows = document.querySelectorAll(".desa-row");
-    const search = document.getElementById("searchInput");
-    const kat = document.getElementById("kategoriFilter");
-    const reset = document.getElementById("resetFilter");
-    const empty = document.getElementById("emptyMessage");
-    const count = document.getElementById("countVisible");
+  const searchInput = document.getElementById("searchInput");
+  const kategoriFilter = document.getElementById("kategoriFilter");
+  const tableRows = document.querySelectorAll("#desaTable tr");
 
-    function filter() {
-      const kw = search.value.toLowerCase().trim();
-      const k = kat.value;
-      let vis = 0;
-      rows.forEach((r) => {
-        const match =
-          r.dataset.search.toLowerCase().includes(kw) &&
-          (k === "" || r.dataset.kategori === k);
-        r.style.display = match ? "" : "none";
-        if (match) vis++;
-      });
-      count.textContent = vis;
-      empty.classList.toggle("hidden", vis > 0);
-    function filter() {
-      const kw = search.value.toLowerCase().trim();
-      const kategori = kat.value;
-      let visible = 0;
+  function filterTable() {
+    const searchValue = searchInput.value.toLowerCase();
+    const kategoriValue = kategoriFilter.value.toLowerCase();
 
-      rows.forEach((row) => {
-        const match =
-          row.dataset.search.toLowerCase().includes(kw) &&
-          (kategori === "" || row.dataset.kategori === kategori);
-        row.style.display = match ? "" : "none";
-        if (match) visible += 1;
-      });
+    tableRows.forEach((row) => {
+      const text = row.innerText.toLowerCase();
+      const kategori = row.dataset.kategori || "";
 
-      empty.classList.toggle("hidden", visible > 0);
-    }
+      const cocokSearch = text.includes(searchValue);
 
-    search.addEventListener("input", filter);
-    kat.addEventListener("change", filter);
-    reset.addEventListener("click", () => {
-      search.value = "";
-      kat.value = "";
-      filter();
+      const cocokKategori =
+        kategoriValue === "" || kategori.includes(kategoriValue);
+
+      row.style.display = cocokSearch && cocokKategori ? "" : "none";
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("keyup", filterTable);
+  }
+
+  if (kategoriFilter) {
+    kategoriFilter.addEventListener("change", filterTable);
+  }
+
+  let ascending = true;
+
+  function sortTable() {
+    const tbody = document.getElementById("desaTable");
+
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    rows.sort((a, b) => {
+      const aValue = parseFloat(a.children[2]?.innerText || 0);
+
+      const bValue = parseFloat(b.children[2]?.innerText || 0);
+
+      return ascending ? aValue - bValue : bValue - aValue;
     });
 
-    filter();
-  })();
+    ascending = !ascending;
+
+    rows.forEach((row) => tbody.appendChild(row));
+  }
 </script>
 {% endblock %}

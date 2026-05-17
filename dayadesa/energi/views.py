@@ -5,6 +5,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
+from .models import Desa, CitizenReport, TopikForum, BalasanForum
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut, GeocoderUnavailable
+from .models import TopikForum
+
+
 
 from .forms import CitizenReportForm
 from .models import CitizenReport, Desa, TopikForum, BalasanForum
@@ -117,10 +123,11 @@ def detail_desa(request, desa_id):
     context = {"desa": desa, "laporan_list": laporan_list}
     return render(request, "energi/detail_desa.html", context)
 
-
+@login_required(login_url="login_anggota")
 def buat_laporan(request):
     desa_id = request.GET.get("desa")
     selected_desa = None
+
     if desa_id:
         selected_desa = Desa.objects.filter(id=desa_id).first()
 
@@ -128,42 +135,70 @@ def buat_laporan(request):
         nama_desa_manual = request.POST.get("nama_desa_manual", "").strip()
         desa_id_post = request.POST.get("desa", "").strip()
 
-        # Jika desa tidak ada di DB, buat desa baru dengan data minimal
         if not desa_id_post and nama_desa_manual:
+            latitude = -5.113
+            longitude = 105.306
+
+            try:
+                geolocator = Nominatim(user_agent="dayadesa_app")
+                query = f"{nama_desa_manual}, Lampung, Indonesia"
+                location = geolocator.geocode(query, timeout=10)
+
+                if location:
+                    latitude = location.latitude
+                    longitude = location.longitude
+
+            except (GeocoderTimedOut, GeocoderUnavailable):
+                pass
+
             desa_obj, created = Desa.objects.get_or_create(
                 nama_desa=nama_desa_manual,
                 defaults={
                     "kecamatan": "-",
                     "kabupaten": "-",
-                    "provinsi": "-",
-                    "latitude": 0,
-                    "longitude": 0,
+                    "provinsi": "Lampung",
+                    "latitude": request.POST.get("latitude") or -5.113,
+                    "longitude": request.POST.get("longitude") or 105.306,
+                    "latitude": float(latitude),
+                    "longitude": float(longitude),
                     "ketersediaan_energi": 50,
                     "keterjangkauan_energi": 50,
                     "keberlanjutan_energi": 50,
                     "keandalan_energi": 50,
-                }
+                },
             )
-            # Inject desa id ke POST data
+
             post_data = request.POST.copy()
             post_data["desa"] = str(desa_obj.id)
             form = CitizenReportForm(post_data)
+
         else:
             form = CitizenReportForm(request.POST)
 
         if form.is_valid():
             form.save()
-            messages.success(request, "Laporan warga berhasil dikirim dan tersimpan di sistem.")
+            messages.success(
+                request,
+                "Laporan warga berhasil dikirim dan tersimpan di sistem."
+            )
             return redirect("daftar_laporan")
+
+        messages.error(request, "Laporan gagal dikirim. Periksa kembali data.")
+
     else:
         initial_data = {}
+
         if selected_desa:
             initial_data["desa"] = selected_desa
+
         form = CitizenReportForm(initial=initial_data)
 
-    context = {"form": form, "selected_desa": selected_desa}
-    return render(request, "energi/buat_laporan.html", context)
+    context = {
+        "form": form,
+        "selected_desa": selected_desa,
+    }
 
+    return render(request, "energi/buat_laporan.html", context)
 
 def daftar_laporan(request):
     q = request.GET.get("q", "").strip()
@@ -226,40 +261,67 @@ def logout_anggota(request):
 
 
 def forum(request):
-    topik_list = TopikForum.objects.select_related("penulis").prefetch_related("balasan")
     from django.contrib.auth.models import User
+    topik_list = TopikForum.objects.all()
+    total_balasan = BalasanForum.objects.count()
     context = {
         "topik_list": topik_list,
         "jumlah_topik": topik_list.count(),
         "jumlah_komentar": BalasanForum.objects.count(),
         "jumlah_anggota_aktif": User.objects.filter(topik_forum__isnull=False).distinct().count(),
     }
-    return render(request, "energi/forum.html", context)
-
+    return render(request, "energi/forum.html", {
+        "topik_list": topik_list,
+        "total_balasan": total_balasan,
+    })
 
 def forum_detail(request, topik_id):
     topik = get_object_or_404(TopikForum, id=topik_id)
-    return render(request, "energi/forum_detail.html", {"topik": topik})
+    balasan_list = topik.balasan.all()
+
+    return render(request, "energi/forum_detail.html", {
+        "topik": topik,
+        "balasan_list": balasan_list,
+    })
 
 
-@login_required
+@login_required(login_url="login_anggota")
 def forum_buat(request):
     if request.method == "POST":
         judul = request.POST.get("judul", "").strip()
         isi = request.POST.get("isi", "").strip()
-        kategori = request.POST.get("kategori", "Umum")
+        kategori = request.POST.get("kategori", "Umum").strip()
+
         if judul and isi:
-            TopikForum.objects.create(judul=judul, isi=isi, kategori=kategori, penulis=request.user)
+            TopikForum.objects.create(
+                judul=judul,
+                isi=isi,
+                kategori=kategori,
+                penulis=request.user,
+            )
             messages.success(request, "Topik berhasil dibuat!")
-    return redirect("forum")
+            return redirect("forum")
+
+        messages.error(request, "Judul dan isi topik wajib diisi.")
+
+    return render(request, "energi/buat_topik.html")
 
 
-@login_required
+@login_required(login_url="login_anggota")
 def forum_balas(request, topik_id):
     topik = get_object_or_404(TopikForum, id=topik_id)
+
     if request.method == "POST":
         isi = request.POST.get("isi", "").strip()
+
         if isi:
-            BalasanForum.objects.create(topik=topik, isi=isi, penulis=request.user)
-            messages.success(request, "Balasan berhasil dikirim!")
-    return redirect("forum_detail", topik_id=topik_id)
+            BalasanForum.objects.create(
+                topik=topik,
+                penulis=request.user,
+                isi=isi
+            )
+            messages.success(request, "Balasan berhasil dikirim.")
+        else:
+            messages.error(request, "Balasan tidak boleh kosong.")
+
+    return redirect("forum_detail", topik_id=topik.id)

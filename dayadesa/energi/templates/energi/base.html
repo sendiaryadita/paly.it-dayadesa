@@ -346,25 +346,48 @@
             >
             {% endwith %}
           </div>
+          
+          <div class="hidden lg:flex items-center gap-3 shrink-0">
 
-          <div class="hidden lg:flex items-center gap-2 shrink-0">
-            {% if request.user.is_authenticated %}
-            <span
-              class="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold"
-              style="background: var(--sage-light); color: var(--teal-deep)"
-            >
-              <i class="fa-solid fa-circle-user"></i>{{
-              request.user.first_name|default:request.user.username }}
-            </span>
-            <a href="{% url 'logout_anggota' %}" class="nav-link">Keluar</a>
-            {% else %}
-            <a href="{% url 'login_anggota' %}" class="nav-link">Login</a>
-            <a href="{% url 'daftar_anggota' %}" class="btn-primary text-sm"
-              >Daftar</a
-            >
-            {% endif %} {% include "energi/partials/theme_toggle.html" %}
-          </div>
-        </div>
+  {% if user.is_authenticated %}
+
+  <div
+    class="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold"
+    style="
+      background: var(--sage-light);
+      color: var(--teal-deep);
+    "
+  >
+    <i class="fa-solid fa-circle-user"></i>
+
+    {{ user.username }}
+  </div>
+
+  <a
+    href="{% url 'logout_anggota' %}"
+    class="btn-soft text-sm px-4 py-2"
+  >
+    Logout
+  </a>
+
+  {% else %}
+
+  <a href="{% url 'login_anggota' %}" class="nav-link">
+    Login
+  </a>
+
+  <a
+    href="{% url 'daftar_anggota' %}"
+    class="btn-primary text-sm"
+  >
+    Daftar
+  </a>
+
+  {% endif %}
+
+  {% include "energi/partials/theme_toggle.html" %}
+
+</div>
 
         <div
           id="mobileNav"
@@ -473,7 +496,7 @@
           >DayaDesa</span
         >
       </div>
-      <p>© 2025 Sistem Informasi Ketahanan Energi Desa Berkelanjutan</p>
+      <p>© 2026 Sistem Informasi Ketahanan Energi Desa Berkelanjutan</p>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
