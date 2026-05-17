@@ -15,4 +15,9 @@ urlpatterns = [
     path("login/", views.login_anggota, name="login_anggota"),
     path("daftar/", views.daftar_anggota, name="daftar_anggota"),
     path("logout/", views.logout_anggota, name="logout_anggota"),
+    # Forum — "forum/buat/" HARUS di atas "forum/<int:topik_id>/"
+    path("forum/", views.forum, name="forum"),
+    path("forum/buat/", views.forum_buat, name="forum_buat"),
+    path("forum/<int:topik_id>/", views.forum_detail, name="forum_detail"),
+    path("forum/<int:topik_id>/balas/", views.forum_balas, name="forum_balas"),
 ]

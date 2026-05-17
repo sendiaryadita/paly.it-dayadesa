@@ -1,142 +1,208 @@
-{% extends "energi/base.html" %} {% block title %}DayaDesa -
-Dashboard{%endblock%} {% block content %}
-<div class="container mx-auto px-4 py-8 md:py-12">
-  <!-- Hero -->
-  <div
-    class="rounded-3xl bg-gradient-to-r from-teal-700 to-emerald-600 text-white p-6 md:p-8 mb-10 shadow-xl"
-  >
-    <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">
-      Dashboard DayaDesa
-    </h1>
-    <p class="text-emerald-50 max-w-2xl mt-2">
-      Sistem informasi geospasial ketahanan energi desa, ESI, dan partisipasi
-      warga.
-    </p>
+{% extends "energi/base.html" %}
+
+{% block title %}DayaDesa - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+  .reveal {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, #5b9e7b 0%, #3d7a5f 40%, #2a5e47 100%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--sage-light);
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 999px;
+  }
+
+  .laporan-card {
+    border-radius: 16px;
+    border: 1px solid var(--border-soft);
+    padding: 1rem 1.2rem;
+    background: var(--warm-white);
+  }
+
+  html.dark .laporan-card {
+    background: #162018;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 md:py-10">
+
+  <div class="hero-gradient rounded-3xl p-7 md:p-10 mb-8 shadow-lg" style="color: white;">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div>
+        <h1 class="text-3xl md:text-4xl font-black tracking-tight">
+          Dashboard DayaDesa
+        </h1>
+        <p class="mt-2 max-w-xl" style="color: rgba(255, 255, 255, 0.85);">
+          Pantau ketahanan energi desa, ESI, dan laporan partisipasi warga secara real-time.
+        </p>
+      </div>
+
+      <div class="flex gap-3">
+        <a href="{% url 'peta_energi' %}" class="px-5 py-2.5 rounded-xl font-semibold text-sm"
+           style="background: rgba(255,255,255,0.18); color:white;">
+          <i class="fa-solid fa-map-location-dot"></i> Lihat Peta
+        </a>
+        <a href="{% url 'buat_laporan' %}" class="px-5 py-2.5 rounded-xl font-semibold text-sm bg-white"
+           style="color: var(--teal-deep);">
+          <i class="fa-solid fa-plus"></i> Laporan
+        </a>
+      </div>
+    </div>
   </div>
 
-  <!-- Stat Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-    <div
-      class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-emerald-100 dark:border-slate-700 transition hover:shadow-md"
-    >
-      <h6
-        class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wide"
-      >
-        Total Desa
-      </h6>
-      <h2 class="text-4xl font-black text-slate-800 dark:text-white mt-1">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="card-soft p-5">
+      <div class="stat-icon mb-3" style="background: var(--sage-light);">
+        <i class="fa-solid fa-city" style="color: var(--teal-soft);"></i>
+      </div>
+      <div class="text-3xl font-black" style="color: var(--text-main);">
         {{ jumlah_desa }}
-      </h2>
-      <p class="text-slate-400 text-sm">Desa terpetakan</p>
+      </div>
+      <div class="text-xs font-semibold uppercase mt-1" style="color: var(--text-muted);">
+        Total Desa
+      </div>
     </div>
-    <div
-      class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-emerald-100 dark:border-slate-700 transition hover:shadow-md"
-    >
-      <h6 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-        Total Laporan
-      </h6>
-      <h2 class="text-4xl font-black text-slate-800 dark:text-white">
+
+    <div class="card-soft p-5">
+      <div class="stat-icon mb-3" style="background: #fef3e2;">
+        <i class="fa-solid fa-file-lines" style="color: var(--amber-soft);"></i>
+      </div>
+      <div class="text-3xl font-black" style="color: var(--text-main);">
         {{ jumlah_laporan }}
-      </h2>
-      <p class="text-slate-400 text-sm">Citizen Report</p>
+      </div>
+      <div class="text-xs font-semibold uppercase mt-1" style="color: var(--text-muted);">
+        Total Laporan
+      </div>
     </div>
-    <div
-      class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-emerald-100 dark:border-slate-700 transition hover:shadow-md"
-    >
-      <h6 class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-        Rata-rata ESI
-      </h6>
-      <h2 class="text-4xl font-black text-slate-800 dark:text-white">
+
+    <div class="card-soft p-5">
+      <div class="stat-icon mb-3" style="background: #e3f5ea;">
+        <i class="fa-solid fa-bolt" style="color: #2d7a55;"></i>
+      </div>
+      <div class="text-3xl font-black" style="color: var(--text-main);">
         {{ rata_rata_esi|floatformat:2 }}
-      </h2>
-      <p class="text-slate-400">Skor ketahanan</p>
+      </div>
+      <div class="text-xs font-semibold uppercase mt-1" style="color: var(--text-muted);">
+        Rata-rata ESI
+      </div>
     </div>
-    <div
-      class="bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm border border-emerald-100 dark:border-slate-700 transition hover:shadow-md"
-    >
-      <h6 class="text-sm font-semibold text-red-500">Desa Krisis</h6>
-      <h2 class="text-4xl font-black text-red-600 dark:text-red-400">
+
+    <div class="card-soft p-5">
+      <div class="stat-icon mb-3" style="background: #fde8e8;">
+        <i class="fa-solid fa-triangle-exclamation" style="color: var(--rose-soft);"></i>
+      </div>
+      <div class="text-3xl font-black" style="color: #b84444;">
         {{ jumlah_krisis }}
-      </h2>
-      <p class="text-slate-400">Prioritas pemantauan</p>
+      </div>
+      <div class="text-xs font-semibold uppercase mt-1" style="color: var(--text-muted);">
+        Desa Krisis
+      </div>
     </div>
   </div>
 
-  <!-- Kategori dan Grafik -->
-  <div class="grid md:grid-cols-5 gap-6 mb-10">
-    <div
-      class="md:col-span-2 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm"
-    >
-      <h5 class="font-bold text-xl text-slate-800 dark:text-white mb-4">
+  <div class="grid md:grid-cols-5 gap-5 mb-8">
+    <div class="md:col-span-2 card-soft p-6">
+      <h5 class="font-bold text-lg mb-5" style="color: var(--text-main);">
+        <i class="fa-solid fa-layer-group mr-2" style="color: var(--sage);"></i>
         Kategori Ketahanan Energi
       </h5>
-      <div class="space-y-3">
-        <div class="flex justify-between">
-          <span class="text-slate-600 dark:text-slate-300">Krisis Energi</span
-          ><span class="font-bold text-red-600 text-lg"
-            >{{ jumlah_krisis }}</span
-          >
+
+      <div class="space-y-4">
+        <div>
+          <div class="flex justify-between mb-1.5">
+            <span class="text-sm" style="color: var(--text-muted);">Krisis Energi</span>
+            <span class="font-bold" style="color: #b84444;">{{ jumlah_krisis }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {% widthratio jumlah_krisis jumlah_desa 100 %}%; background: #e8a0a0;"></div>
+          </div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-slate-600 dark:text-slate-300">Transisi Energi</span
-          ><span class="font-bold text-amber-600 text-lg"
-            >{{ jumlah_transisi }}</span
-          >
+
+        <div>
+          <div class="flex justify-between mb-1.5">
+            <span class="text-sm" style="color: var(--text-muted);">Transisi Energi</span>
+            <span class="font-bold" style="color: #b06d28;">{{ jumlah_transisi }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {% widthratio jumlah_transisi jumlah_desa 100 %}%; background: #e8c87c;"></div>
+          </div>
         </div>
-        <div class="flex justify-between">
-          <span class="text-slate-600 dark:text-slate-300">Mandiri Energi</span
-          ><span class="font-bold text-emerald-600 text-lg"
-            >{{ jumlah_mandiri }}</span
-          >
+
+        <div>
+          <div class="flex justify-between mb-1.5">
+            <span class="text-sm" style="color: var(--text-muted);">Mandiri Energi</span>
+            <span class="font-bold" style="color: #2d7a55;">{{ jumlah_mandiri }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: {% widthratio jumlah_mandiri jumlah_desa 100 %}%; background: var(--sage);"></div>
+          </div>
         </div>
       </div>
-      <a
-        href="{% url 'peta_energi' %}"
-        class="mt-6 block w-full text-center bg-teal-600 hover:bg-teal-700 text-white rounded-xl py-2.5 transition"
-        >Lihat Peta Energi →</a
-      >
     </div>
-    <div
-      class="md:col-span-3 bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm"
-    >
-      <h5 class="font-bold text-xl text-slate-800 dark:text-white mb-3">
+
+    <div class="md:col-span-3 card-soft p-6">
+      <h5 class="font-bold text-lg mb-4" style="color: var(--text-main);">
+        <i class="fa-solid fa-chart-pie mr-2" style="color: var(--sage);"></i>
         Grafik Kategori ESI
       </h5>
-      <canvas id="dashboardEsiChart" height="150"></canvas>
+      <div style="max-height: 280px; display: flex; justify-content: center;">
+        <canvas id="dashboardEsiChart"></canvas>
+      </div>
     </div>
   </div>
 
-  <!-- Desa Prioritas dan Rekomendasi -->
-  <div class="grid lg:grid-cols-7 gap-6">
-    <div
-      class="lg:col-span-4 bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm"
-    >
-      <h5 class="font-bold text-xl text-slate-800 dark:text-white mb-4">
-        Desa Prioritas (ESI Terendah)
-      </h5>
+  <div class="grid lg:grid-cols-7 gap-5 mb-8">
+    <div class="lg:col-span-4 card-soft p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h5 class="font-bold text-lg" style="color: var(--text-main);">
+          <i class="fa-solid fa-ranking-star mr-2" style="color: var(--rose-soft);"></i>
+          Desa Prioritas
+        </h5>
+        <a href="{% url 'indeks_desa' %}" class="text-xs btn-soft py-1.5 px-3">
+          Lihat semua
+        </a>
+      </div>
+
       {% if desa_prioritas %}
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto rounded-xl" style="border: 1px solid var(--border-soft);">
         <table class="min-w-full text-sm">
-          <thead class="bg-emerald-50 dark:bg-slate-700">
+          <thead style="background: var(--sage-light);">
             <tr>
               <th class="p-3 text-left">Desa</th>
-              <th class="text-left">Lokasi</th>
-              <th class="text-left">ESI</th>
-              <th class="text-left">Aksi</th>
+              <th class="p-3 text-left">Lokasi</th>
+              <th class="p-3 text-left">ESI</th>
+              <th class="p-3 text-left">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {% for desa in desa_prioritas %}
-            <tr class="border-b border-emerald-100 dark:border-slate-700">
+            <tr style="border-top: 1px solid var(--border-soft);">
               <td class="p-3 font-semibold">{{ desa.nama_desa }}</td>
-              <td>{{ desa.kecamatan }}</td>
-              <td class="font-bold">{{ desa.esi_score|floatformat:2 }}</td>
-              <td>
-                <a
-                  href="{% url 'detail_desa' desa.id %}"
-                  class="bg-teal-100 dark:bg-teal-900/40 text-teal-800 dark:text-teal-200 px-3 py-1 rounded-full text-xs font-medium"
-                  >Detail</a
-                >
+              <td class="p-3">{{ desa.kecamatan }}</td>
+              <td class="p-3 font-bold" style="color: #b84444;">
+                {{ desa.esi_score|floatformat:2 }}
+              </td>
+              <td class="p-3">
+                <a href="{% url 'detail_desa' desa.id %}" class="badge badge-mandiri text-xs">
+                  Detail →
+                </a>
               </td>
             </tr>
             {% endfor %}
@@ -144,109 +210,135 @@ Dashboard{%endblock%} {% block content %}
         </table>
       </div>
       {% else %}
-      <div class="text-center text-slate-400 py-4">Belum ada data desa.</div>
+      <div class="text-center py-10" style="color: var(--text-muted);">
+        Belum ada data desa.
+      </div>
       {% endif %}
     </div>
-    <div
-      class="lg:col-span-3 bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-sm"
-    >
-      <h5 class="font-bold text-xl text-slate-800 dark:text-white mb-3">
+
+    <div class="lg:col-span-3 card-soft p-6">
+      <h5 class="font-bold text-lg mb-4" style="color: var(--text-main);">
+        <i class="fa-solid fa-lightbulb mr-2" style="color: #e8a87c;"></i>
         Rekomendasi Aksi
       </h5>
+
       <div class="space-y-4">
-        <div>
-          <div class="font-semibold text-red-600">Krisis Energi</div>
-          <p class="text-slate-500 text-sm">
-            Prioritas pemantauan & peningkatan akses listrik.
+        <div class="p-4 rounded-xl" style="background: #fde8e8;">
+          <div class="font-bold text-sm mb-1" style="color: #b84444;">Krisis Energi</div>
+          <p class="text-xs" style="color: #8b5555;">
+            Prioritas pemantauan dan peningkatan akses listrik segera.
           </p>
         </div>
-        <div>
-          <div class="font-semibold text-amber-600">Transisi Energi</div>
-          <p class="text-slate-500 text-sm">
-            Arahkan pada keandalan pasokan & EBT desa.
+
+        <div class="p-4 rounded-xl" style="background: #fef3e2;">
+          <div class="font-bold text-sm mb-1" style="color: #b06d28;">Transisi Energi</div>
+          <p class="text-xs" style="color: #7a5522;">
+            Arahkan pada keandalan pasokan dan energi baru terbarukan desa.
           </p>
         </div>
-        <div>
-          <div class="font-semibold text-emerald-600">Mandiri Energi</div>
-          <p class="text-slate-500 text-sm">
-            Jadi contoh praktik baik berkelanjutan.
+
+        <div class="p-4 rounded-xl" style="background: #e3f5ea;">
+          <div class="font-bold text-sm mb-1" style="color: #2d7a55;">Mandiri Energi</div>
+          <p class="text-xs" style="color: #3a6b4f;">
+            Jadikan sebagai contoh praktik baik yang berkelanjutan.
           </p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Laporan Warga Terbaru -->
-  <div class="mt-10 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-sm">
-    <h5 class="font-bold text-xl text-slate-800 dark:text-white mb-4">
-      Laporan Warga Terbaru
-    </h5>
+  <div class="card-soft p-6">
+    <div class="flex items-center justify-between mb-5">
+      <h5 class="font-bold text-lg" style="color: var(--text-main);">
+        <i class="fa-solid fa-newspaper mr-2" style="color: var(--sage);"></i>
+        Laporan Warga Terbaru
+      </h5>
+      <a href="{% url 'daftar_laporan' %}" class="btn-soft text-xs py-1.5 px-3">
+        Lihat semua
+      </a>
+    </div>
+
     {% if laporan_list %}
     <div class="grid md:grid-cols-2 gap-4">
       {% for laporan in laporan_list %}
-      <div
-        class="border border-emerald-100 dark:border-slate-700 rounded-xl p-4"
-      >
-        <div class="flex justify-between">
-          <strong>{{ laporan.desa.nama_desa }}</strong>
-          <span
-            class="px-2 py-0.5 rounded-full text-xs font-semibold {% if laporan.status == 'Baru' %}bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200 {% elif laporan.status == 'Diproses' %}bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-200 {% else %}bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-200{% endif %}"
-          >
-            {{ laporan.status }}
-          </span>
+      <div class="laporan-card">
+        <div class="flex justify-between items-start gap-2 mb-2">
+          <div class="font-semibold text-sm" style="color: var(--text-main);">
+            {{ laporan.desa.nama_desa }}
+          </div>
+          <span class="badge badge-mandiri">{{ laporan.status }}</span>
         </div>
-        <p class="text-slate-500 text-sm">
-          {{ laporan.nama_pelapor }} • {{ laporan.kategori_laporan }}
+
+        <p class="text-xs mb-2" style="color: var(--text-muted);">
+          <i class="fa-solid fa-user mr-1"></i>{{ laporan.nama_pelapor }}
+          ·
+          <i class="fa-solid fa-tag mr-1"></i>{{ laporan.kategori_laporan }}
         </p>
-        <p class="text-slate-700 dark:text-slate-300 text-sm mt-2">
+
+        <p class="text-sm" style="color: var(--text-main);">
           {{ laporan.isi_laporan|truncatewords:20 }}
         </p>
       </div>
       {% endfor %}
     </div>
     {% else %}
-    <div class="text-amber-600 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-xl">
-      Belum ada laporan warga.
+    <div class="text-center py-12" style="color: var(--text-muted);">
+      <p>Belum ada laporan warga.</p>
+      <a href="{% url 'buat_laporan' %}" class="btn-primary inline-block mt-4 text-sm">
+        Buat Laporan Pertama
+      </a>
     </div>
     {% endif %}
   </div>
 </div>
-{% endblock %} {% block extra_js %} {{ jumlah_krisis|json_script:"krisis-data"
-}} {{ jumlah_transisi|json_script:"transisi-data" }} {{
-jumlah_mandiri|json_script:"mandiri-data" }}
+{% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% block extra_js %}
+{{ jumlah_krisis|json_script:"krisis-data" }}
+{{ jumlah_transisi|json_script:"transisi-data" }}
+{{ jumlah_mandiri|json_script:"mandiri-data" }}
+
 <script>
-  (function () {
-    const krisis = JSON.parse(
-      document.getElementById("krisis-data").textContent || "0",
-    );
-    const transisi = JSON.parse(
-      document.getElementById("transisi-data").textContent || "0",
-    );
-    const mandiri = JSON.parse(
-      document.getElementById("mandiri-data").textContent || "0",
-    );
+  function getJsonNumber(id) {
+    const el = document.getElementById(id);
+    if (!el) return 0;
 
-    const ctx = document.getElementById("dashboardEsiChart").getContext("2d");
-    new Chart(ctx, {
+    try {
+      return JSON.parse(el.textContent || "0");
+    } catch (error) {
+      console.warn("Data chart tidak valid:", id, error);
+      return 0;
+    }
+  }
+
+  const krisis = getJsonNumber("krisis-data");
+  const transisi = getJsonNumber("transisi-data");
+  const mandiri = getJsonNumber("mandiri-data");
+
+  const ctx = document.getElementById("dashboardEsiChart");
+
+  if (ctx && typeof Chart !== "undefined") {
+    new Chart(ctx.getContext("2d"), {
       type: "doughnut",
       data: {
         labels: ["Krisis Energi", "Transisi Energi", "Mandiri Energi"],
-        datasets: [
-          {
-            data: [krisis, transisi, mandiri],
-            backgroundColor: ["#dc2626", "#f59e0b", "#10b981"],
-            borderWidth: 0,
-          },
-        ],
+        datasets: [{
+          data: [krisis, transisi, mandiri],
+          backgroundColor: ["#e8a0a0", "#e8c87c", "#7aad8c"],
+          borderColor: ["#fde8e8", "#fef3e2", "#e3f5ea"],
+          borderWidth: 4
+        }]
       },
       options: {
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { position: "bottom" } },
-      },
+        cutout: "65%",
+        plugins: {
+          legend: {
+            position: "bottom"
+          }
+        }
+      }
     });
-  })();
+  }
 </script>
 {% endblock %}

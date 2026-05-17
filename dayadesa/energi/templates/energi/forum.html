@@ -1,0 +1,535 @@
+{% extends "energi/base.html" %} {% block title %}Forum Diskusi – DayaDesa
+{%endblock %} {% block extra_css %}
+<style>
+  .forum-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 1.25rem 1.4rem;
+    transition:
+      box-shadow 0.2s,
+      transform 0.2s;
+    cursor: pointer;
+  }
+  .forum-card:hover {
+    box-shadow: 0 6px 28px rgba(93, 143, 113, 0.12);
+    transform: translateY(-1px);
+    border-color: var(--sage-mid);
+  }
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: white;
+    flex-shrink: 0;
+  }
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .reply-bubble {
+    background: var(--cream);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 1rem 1.2rem;
+  }
+  .reply-form textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  /* Tab styles */
+  .tab-btn {
+    padding: 0.5rem 1.2rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    color: var(--text-muted);
+  }
+  .tab-btn.active {
+    background: var(--sage-light);
+    color: var(--teal-deep);
+  }
+  .tab-btn:hover:not(.active) {
+    background: var(--cream);
+  }
+
+  /* Pinned topic */
+  .forum-card.pinned {
+    border-left: 4px solid var(--sage);
+  }
+
+  html.dark .forum-card {
+    background: #162018;
+  }
+  html.dark .reply-bubble {
+    background: #0e1a14;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-8 max-w-5xl">
+  <!-- Header -->
+  <div
+    class="hero-gradient hero-pattern rounded-3xl p-7 md:p-9 mb-7 shadow-lg fade-up text-white"
+  >
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+    >
+      <div>
+        <p
+          class="text-sm font-semibold uppercase tracking-widest mb-1"
+          style="color: rgba(255, 255, 255, 0.7)"
+        >
+          <i class="fa-solid fa-comments mr-1.5"></i>Komunitas DayaDesa
+        </p>
+        <h1 class="text-2xl md:text-3xl font-black">Forum Diskusi Anggota</h1>
+        <p class="mt-1 text-sm" style="color: rgba(255, 255, 255, 0.82)">
+          Bagikan pengalaman, solusi, dan ide untuk ketahanan energi desa
+        </p>
+      </div>
+      {% if request.user.is_authenticated %}
+      <button
+        onclick="toggleModal()"
+        class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm bg-white"
+        style="
+          color: var(--teal-deep);
+          transition: opacity 0.2s;
+          white-space: nowrap;
+        "
+      >
+        <i class="fa-solid fa-plus"></i> Buat Topik Baru
+      </button>
+      {% else %}
+      <a
+        href="{% url 'login_anggota' %}"
+        class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm"
+        style="
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(8px);
+          color: white;
+        "
+      >
+        <i class="fa-solid fa-right-to-bracket"></i> Login untuk Diskusi
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Stats mini -->
+  <div class="grid grid-cols-3 gap-4 mb-7">
+    <div class="card-soft p-4 text-center fade-up">
+      <div class="text-2xl font-black" style="color: var(--teal-deep)">
+        {{ jumlah_topik|default:"0" }}
+      </div>
+      <div class="text-xs mt-0.5" style="color: var(--text-muted)">
+        Total Topik
+      </div>
+    </div>
+    <div class="card-soft p-4 text-center fade-up stagger-1">
+      <div class="text-2xl font-black" style="color: var(--teal-deep)">
+        {{ jumlah_komentar|default:"0" }}
+      </div>
+      <div class="text-xs mt-0.5" style="color: var(--text-muted)">
+        Total Balasan
+      </div>
+    </div>
+    <div class="card-soft p-4 text-center fade-up stagger-2">
+      <div class="text-2xl font-black" style="color: var(--teal-deep)">
+        {{ jumlah_anggota_aktif|default:"0" }}
+      </div>
+      <div class="text-xs mt-0.5" style="color: var(--text-muted)">
+        Anggota Aktif
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter tabs + search -->
+  <div class="flex flex-wrap items-center justify-between gap-3 mb-5 fade-up">
+    <div class="flex gap-1 p-1 rounded-2xl" style="background: var(--cream)">
+      <button
+        class="tab-btn active"
+        data-tab="semua"
+        onclick="filterTab(this, 'semua')"
+      >
+        Semua
+      </button>
+      <button
+        class="tab-btn"
+        data-tab="energi"
+        onclick="filterTab(this, 'energi')"
+      >
+        <i class="fa-solid fa-bolt mr-1"></i>Energi
+      </button>
+      <button
+        class="tab-btn"
+        data-tab="laporan"
+        onclick="filterTab(this, 'laporan')"
+      >
+        <i class="fa-solid fa-file-lines mr-1"></i>Laporan
+      </button>
+      <button class="tab-btn" data-tab="umum" onclick="filterTab(this, 'umum')">
+        <i class="fa-solid fa-globe mr-1"></i>Umum
+      </button>
+    </div>
+    <div class="relative">
+      <i
+        class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-sm"
+        style="color: var(--text-muted)"
+      ></i>
+      <input
+        type="text"
+        id="forumSearch"
+        placeholder="Cari topik…"
+        class="input-soft pl-9"
+        style="width: 220px"
+      />
+    </div>
+  </div>
+
+  <!-- Forum List -->
+  <div class="space-y-3 mb-8" id="forumList">
+    {% if topik_list %} {% for topik in topik_list %}
+    <a
+      href="{% url 'forum_detail' topik.id %}"
+      class="forum-card block {% if topik.pinned %}pinned{% endif %} fade-up"
+      data-tag="{{ topik.kategori|lower }}"
+    >
+      <div class="flex items-start gap-3">
+        <!-- Avatar -->
+        <div
+          class="avatar"
+          style="background: hsl({{ topik.id|add:'100' }}, 40%, 55%)"
+        >
+          {{ topik.penulis.first_name|default:topik.penulis.username|first|upper
+          }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap mb-1">
+            {% if topik.pinned %}
+            <span
+              class="tag-chip"
+              style="background: var(--sage-light); color: var(--teal-deep)"
+              ><i class="fa-solid fa-thumbtack"></i> Disematkan</span
+            >
+            {% endif %}
+            <span class="tag-chip" style="background: #e3f5ea; color: #2d7a55"
+              >{{ topik.kategori }}</span
+            >
+          </div>
+          <h3
+            class="font-bold text-base leading-snug truncate"
+            style="color: var(--text-main)"
+          >
+            {{ topik.judul }}
+          </h3>
+          <p class="text-sm mt-1 line-clamp-2" style="color: var(--text-muted)">
+            {{ topik.isi|truncatewords:25 }}
+          </p>
+          <div
+            class="flex items-center gap-4 mt-2 text-xs"
+            style="color: var(--text-muted)"
+          >
+            <span
+              ><i class="fa-solid fa-user mr-1"></i>{{
+              topik.penulis.first_name|default:topik.penulis.username }}</span
+            >
+            <span
+              ><i class="fa-solid fa-clock mr-1"></i>{{
+              topik.dibuat_pada|timesince }} lalu</span
+            >
+            <span
+              ><i class="fa-solid fa-comment mr-1"></i>{{ topik.balasan.count }}
+              balasan</span
+            >
+          </div>
+        </div>
+        <i
+          class="fa-solid fa-chevron-right text-sm mt-1 flex-shrink-0"
+          style="color: var(--text-muted)"
+        ></i>
+      </div>
+    </a>
+    {% endfor %} {% else %}
+    <!-- Empty state / demo posts -->
+    <div class="forum-card pinned fade-up" data-tag="energi">
+      <div class="flex items-start gap-3">
+        <div class="avatar" style="background: #5b9e7b">
+          <i class="fa-solid fa-thumbtack text-sm"></i>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <span
+              class="tag-chip"
+              style="background: var(--sage-light); color: var(--teal-deep)"
+              ><i class="fa-solid fa-thumbtack"></i> Disematkan</span
+            >
+            <span class="tag-chip" style="background: #e3f5ea; color: #2d7a55"
+              >Energi</span
+            >
+          </div>
+          <h3 class="font-bold" style="color: var(--text-main)">
+            📌 Panduan Penggunaan Forum DayaDesa
+          </h3>
+          <p class="text-sm mt-1" style="color: var(--text-muted)">
+            Selamat datang di forum diskusi! Silakan baca aturan & panduan
+            penggunaan forum di sini sebelum mulai berdiskusi.
+          </p>
+          <div class="flex gap-4 mt-2 text-xs" style="color: var(--text-muted)">
+            <span><i class="fa-solid fa-user mr-1"></i>Admin DayaDesa</span>
+            <span><i class="fa-solid fa-clock mr-1"></i>Baru saja</span>
+            <span><i class="fa-solid fa-comment mr-1"></i>0 balasan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="forum-card fade-up stagger-1" data-tag="energi">
+      <div class="flex items-start gap-3">
+        <div class="avatar" style="background: #e8a87c">A</div>
+        <div class="flex-1">
+          <span
+            class="tag-chip mb-1 block w-fit"
+            style="background: #e3f5ea; color: #2d7a55"
+            >Energi</span
+          >
+          <h3 class="font-bold" style="color: var(--text-main)">
+            Pengalaman Pasang Panel Surya di Desa Tanjung
+          </h3>
+          <p class="text-sm mt-1" style="color: var(--text-muted)">
+            Bulan lalu kami berhasil memasang 12 unit panel surya dengan bantuan
+            program EBT. Prosesnya panjang tapi hasilnya sangat memuaskan...
+          </p>
+          <div class="flex gap-4 mt-2 text-xs" style="color: var(--text-muted)">
+            <span><i class="fa-solid fa-user mr-1"></i>Ahmad Budi</span>
+            <span><i class="fa-solid fa-clock mr-1"></i>2 hari lalu</span>
+            <span><i class="fa-solid fa-comment mr-1"></i>5 balasan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="forum-card fade-up stagger-2" data-tag="laporan">
+      <div class="flex items-start gap-3">
+        <div class="avatar" style="background: #7aad8c">S</div>
+        <div class="flex-1">
+          <span
+            class="tag-chip mb-1 block w-fit"
+            style="background: #fef3e2; color: #b06d28"
+            >Laporan</span
+          >
+          <h3 class="font-bold" style="color: var(--text-main)">
+            Cara Mengisi Laporan Warga dengan Benar
+          </h3>
+          <p class="text-sm mt-1" style="color: var(--text-muted)">
+            Ada beberapa hal yang sering ditanyakan soal cara mengisi formulir
+            laporan. Saya mau berbagi tips dari pengalaman...
+          </p>
+          <div class="flex gap-4 mt-2 text-xs" style="color: var(--text-muted)">
+            <span><i class="fa-solid fa-user mr-1"></i>Siti Rahayu</span>
+            <span><i class="fa-solid fa-clock mr-1"></i>5 hari lalu</span>
+            <span><i class="fa-solid fa-comment mr-1"></i>12 balasan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="forum-card fade-up stagger-3" data-tag="umum">
+      <div class="flex items-start gap-3">
+        <div class="avatar" style="background: #b8d9c2">B</div>
+        <div class="flex-1">
+          <span
+            class="tag-chip mb-1 block w-fit"
+            style="background: #f5f0e8; color: #6b5c3e"
+            >Umum</span
+          >
+          <h3 class="font-bold" style="color: var(--text-main)">
+            Diskusi: Bagaimana Menarik Minat Warga untuk Hemat Energi?
+          </h3>
+          <p class="text-sm mt-1" style="color: var(--text-muted)">
+            Salah satu tantangan terbesar adalah edukasi warga. Apa strategi
+            yang sudah berhasil di desa kalian?
+          </p>
+          <div class="flex gap-4 mt-2 text-xs" style="color: var(--text-muted)">
+            <span><i class="fa-solid fa-user mr-1"></i>Budi Santoso</span>
+            <span><i class="fa-solid fa-clock mr-1"></i>1 minggu lalu</span>
+            <span><i class="fa-solid fa-comment mr-1"></i>8 balasan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="forumEmpty"
+      class="hidden text-center py-10"
+      style="color: var(--text-muted)"
+    >
+      <i
+        class="fa-solid fa-magnifying-glass text-3xl mb-3 block opacity-30"
+      ></i>
+      Tidak ada topik yang cocok.
+    </div>
+    {% endif %}
+  </div>
+
+  {% if not request.user.is_authenticated %}
+  <!-- Login CTA -->
+  <div
+    class="card-soft p-8 text-center fade-up"
+    style="border: 2px dashed var(--border-soft)"
+  >
+    <i
+      class="fa-solid fa-lock text-3xl mb-3 block"
+      style="color: var(--sage)"
+    ></i>
+    <h3 class="font-bold text-lg mb-2" style="color: var(--text-main)">
+      Gabung Diskusi
+    </h3>
+    <p class="text-sm mb-4" style="color: var(--text-muted)">
+      Login atau buat akun untuk membuat topik dan membalas diskusi
+    </p>
+    <div class="flex gap-3 justify-center">
+      <a href="{% url 'login_anggota' %}" class="btn-soft px-6 py-2.5">Login</a>
+      <a href="{% url 'daftar_anggota' %}" class="btn-primary px-6 py-2.5"
+        >Daftar Gratis</a
+      >
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Modal Buat Topik Baru -->
+{% if request.user.is_authenticated %}
+<div
+  id="topikModal"
+  class="fixed inset-0 z-[100] hidden items-center justify-center p-4"
+  style="background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px)"
+>
+  <div class="card-soft w-full max-w-lg p-7 fade-up">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-bold text-lg" style="color: var(--text-main)">
+        <i class="fa-solid fa-pen-to-square mr-2" style="color: var(--sage)"></i
+        >Buat Topik Baru
+      </h3>
+      <button
+        onclick="toggleModal()"
+        class="w-8 h-8 rounded-full flex items-center justify-center text-sm"
+        style="background: var(--sage-light); color: var(--teal-deep)"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <form method="post" action="{% url 'forum_buat' %}" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label
+          class="block text-sm font-semibold mb-1.5"
+          style="color: var(--text-main)"
+          >Judul Topik</label
+        >
+        <input
+          type="text"
+          name="judul"
+          class="input-soft"
+          placeholder="Tuliskan judul topik diskusi…"
+          required
+        />
+      </div>
+      <div>
+        <label
+          class="block text-sm font-semibold mb-1.5"
+          style="color: var(--text-main)"
+          >Kategori</label
+        >
+        <select name="kategori" class="input-soft">
+          <option value="Energi">⚡ Energi</option>
+          <option value="Laporan">📄 Laporan</option>
+          <option value="Umum">🌐 Umum</option>
+        </select>
+      </div>
+      <div>
+        <label
+          class="block text-sm font-semibold mb-1.5"
+          style="color: var(--text-main)"
+          >Isi Diskusi</label
+        >
+        <textarea
+          name="isi"
+          class="input-soft reply-form"
+          rows="5"
+          placeholder="Tuliskan isi topik atau pertanyaan Anda…"
+          required
+        ></textarea>
+      </div>
+      <div class="flex gap-3 pt-1">
+        <button
+          type="button"
+          onclick="toggleModal()"
+          class="btn-soft flex-1 py-2.5"
+        >
+          Batal
+        </button>
+        <button type="submit" class="btn-primary flex-1 py-2.5">
+          <i class="fa-solid fa-paper-plane mr-1.5"></i>Posting Topik
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<script>
+  function toggleModal() {
+    const modal = document.getElementById("topikModal");
+    modal.classList.toggle("hidden");
+    modal.classList.toggle("flex");
+  }
+
+  // Close modal on backdrop click
+  document
+    .getElementById("topikModal")
+    ?.addEventListener("click", function (e) {
+      if (e.target === this) toggleModal();
+    });
+
+  // Tab filter
+  function filterTab(el, tag) {
+    document
+      .querySelectorAll(".tab-btn")
+      .forEach((b) => b.classList.remove("active"));
+    el.classList.add("active");
+    applyFilters();
+  }
+
+  // Search + tab filter combined
+  document
+    .getElementById("forumSearch")
+    ?.addEventListener("input", applyFilters);
+
+  function applyFilters() {
+    const activeTab =
+      document.querySelector(".tab-btn.active")?.dataset.tab || "semua";
+    const kw = document.getElementById("forumSearch").value.toLowerCase();
+    const cards = document.querySelectorAll(".forum-card[data-tag]");
+    let vis = 0;
+    cards.forEach((card) => {
+      const tagMatch = activeTab === "semua" || card.dataset.tag === activeTab;
+      const textMatch = card.textContent.toLowerCase().includes(kw);
+      card.style.display = tagMatch && textMatch ? "" : "none";
+      if (tagMatch && textMatch) vis++;
+    });
+    const empty = document.getElementById("forumEmpty");
+    if (empty) empty.classList.toggle("hidden", vis > 0);
+  }
+</script>
+{% endblock %}

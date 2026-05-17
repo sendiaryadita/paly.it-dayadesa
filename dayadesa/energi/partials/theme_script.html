@@ -1,0 +1,23 @@
+<script>
+  (function () {
+    const toggle = document.querySelectorAll("[data-theme-toggle]");
+    function setTheme(theme) {
+      if (theme === "dark") document.documentElement.classList.add("dark");
+      else document.documentElement.classList.remove("dark");
+      localStorage.setItem("dayadesa-theme", theme);
+    }
+    const saved = localStorage.getItem("dayadesa-theme");
+    if (
+      saved === "dark" ||
+      (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      setTheme("dark");
+    }
+    toggle.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.contains("dark");
+        setTheme(isDark ? "light" : "dark");
+      });
+    });
+  })();
+</script>

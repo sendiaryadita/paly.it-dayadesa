@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CitizenReport, Desa
+from .models import CitizenReport, Desa, TopikForum, BalasanForum
 
 
 @admin.register(Desa)
@@ -52,3 +52,16 @@ class CitizenReportAdmin(admin.ModelAdmin):
     readonly_fields = (
         "tanggal_laporan",
     )
+
+@admin.register(TopikForum)
+class TopikForumAdmin(admin.ModelAdmin):
+    list_display = ("judul", "kategori", "penulis", "pinned", "dibuat_pada")
+    list_filter = ("kategori", "pinned")
+    search_fields = ("judul", "isi", "penulis__username")
+    list_editable = ("pinned",)
+
+
+@admin.register(BalasanForum)
+class BalasanForumAdmin(admin.ModelAdmin):
+    list_display = ("topik", "penulis", "dibuat_pada")
+    search_fields = ("isi", "penulis__username", "topik__judul")

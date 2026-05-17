@@ -1,117 +1,163 @@
-{% extends "energi/base.html" %} {% block title %}DayaDesa - Daftar
-Anggota{%endblock %} {% block content %}
-<div class="container mx-auto px-4 py-12 max-w-md">
-  <div
-    class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8 transition-colors"
-  >
-    <h2
-      class="text-2xl font-bold text-slate-800 dark:text-slate-100 text-center"
-    >
-      Daftar Anggota Baru
-    </h2>
-    <p class="text-slate-500 dark:text-slate-400 text-center mb-6">
-      Ikut berkontribusi untuk ketahanan energi desa
-    </p>
-
-    <form method="post" novalidate>
-      {% csrf_token %}
-
-      <!-- Username -->
-      <div class="mb-4">
-        <label
-          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
-          >Username</label
+{% extends "energi/base.html" %} {% block title %}Daftar Anggota – DayaDesa
+{%endblock %} {% block content %}
+<div
+  class="min-h-screen flex items-center justify-center px-4 py-12"
+  style="
+    background: linear-gradient(135deg, var(--sage-light) 0%, var(--cream) 60%);
+  "
+>
+  <div class="w-full max-w-md">
+    <div class="card-soft p-8 fade-up">
+      <div class="text-center mb-7">
+        <div
+          class="w-14 h-14 hero-gradient rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg"
         >
-        <input
-          type="text"
-          name="username"
-          value="{{ form.username.value|default:'' }}"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900 focus:ring-2 focus:ring-teal-500"
-          required
-        />
-        {% if form.username.errors %}
-        <p class="text-red-500 text-xs mt-1">{{ form.username.errors.0 }}</p>
-        {% endif %}
+          <i class="fa-solid fa-user-plus text-white text-lg"></i>
+        </div>
+        <h2 class="text-2xl font-black" style="color: var(--text-main)">
+          Buat Akun Baru
+        </h2>
+        <p class="text-sm mt-1" style="color: var(--text-muted)">
+          Bergabung & berkontribusi untuk ketahanan energi desa
+        </p>
       </div>
 
-      <!-- Email (opsional) -->
-      <div class="mb-4">
-        <label
-          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
-          >Email (opsional)</label
-        >
-        <input
-          type="email"
-          name="email"
-          value="{{ form.email.value|default:'' }}"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
-        />
-      </div>
+      <form method="post" novalidate class="space-y-4">
+        {% csrf_token %}
 
-      <!-- Nama depan (first_name) -->
-      <div class="mb-4">
-        <label
-          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
-          >Nama Lengkap</label
-        >
-        <input
-          type="text"
-          name="first_name"
-          value="{{ form.first_name.value|default:'' }}"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
-        />
-      </div>
+        <div>
+          <label
+            class="block text-sm font-semibold mb-1.5"
+            style="color: var(--text-main)"
+          >
+            <i class="fa-solid fa-at mr-1.5" style="color: var(--sage)"></i
+            >Username
+          </label>
+          <input
+            type="text"
+            name="username"
+            value="{{ form.username.value|default:'' }}"
+            class="input-soft"
+            placeholder="Pilih username unik"
+            required
+          />
+          {% if form.username.errors %}
+          <p class="text-xs mt-1" style="color: #b84444">
+            <i class="fa-solid fa-circle-xmark mr-1"></i>{{
+            form.username.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
 
-      <!-- Password1 -->
-      <div class="mb-4">
-        <label
-          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
-          >Password</label
-        >
-        <input
-          type="password"
-          name="password1"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
-          required
-        />
-        {% if form.password1.errors %}
-        <p class="text-red-500 text-xs mt-1">{{ form.password1.errors.0 }}</p>
-        {% endif %}
-      </div>
+        <div>
+          <label
+            class="block text-sm font-semibold mb-1.5"
+            style="color: var(--text-main)"
+          >
+            <i class="fa-solid fa-id-card mr-1.5" style="color: var(--sage)"></i
+            >Nama Lengkap
+          </label>
+          <input
+            type="text"
+            name="first_name"
+            value="{{ form.first_name.value|default:'' }}"
+            class="input-soft"
+            placeholder="Nama lengkap Anda"
+          />
+        </div>
 
-      <!-- Password2 -->
-      <div class="mb-6">
-        <label
-          class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1"
-          >Konfirmasi Password</label
-        >
-        <input
-          type="password"
-          name="password2"
-          class="w-full border border-emerald-200 dark:border-slate-600 rounded-xl p-2 bg-white dark:bg-slate-900"
-          required
-        />
-        {% if form.password2.errors %}
-        <p class="text-red-500 text-xs mt-1">{{ form.password2.errors.0 }}</p>
-        {% endif %}
-      </div>
+        <div>
+          <label
+            class="block text-sm font-semibold mb-1.5"
+            style="color: var(--text-main)"
+          >
+            <i
+              class="fa-solid fa-envelope mr-1.5"
+              style="color: var(--sage)"
+            ></i
+            >Email
+            <span class="font-normal" style="color: var(--text-muted)"
+              >(opsional)</span
+            >
+          </label>
+          <input
+            type="email"
+            name="email"
+            value="{{ form.email.value|default:'' }}"
+            class="input-soft"
+            placeholder="email@contoh.com"
+          />
+        </div>
 
-      <button
-        type="submit"
-        class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 rounded-xl transition"
+        <div>
+          <label
+            class="block text-sm font-semibold mb-1.5"
+            style="color: var(--text-main)"
+          >
+            <i class="fa-solid fa-lock mr-1.5" style="color: var(--sage)"></i
+            >Password
+          </label>
+          <input
+            type="password"
+            name="password1"
+            class="input-soft"
+            placeholder="Buat password kuat"
+            required
+          />
+          {% if form.password1.errors %}
+          <p class="text-xs mt-1" style="color: #b84444">
+            <i class="fa-solid fa-circle-xmark mr-1"></i>{{
+            form.password1.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-semibold mb-1.5"
+            style="color: var(--text-main)"
+          >
+            <i
+              class="fa-solid fa-shield-halved mr-1.5"
+              style="color: var(--sage)"
+            ></i
+            >Konfirmasi Password
+          </label>
+          <input
+            type="password"
+            name="password2"
+            class="input-soft"
+            placeholder="Ulangi password Anda"
+            required
+          />
+          {% if form.password2.errors %}
+          <p class="text-xs mt-1" style="color: #b84444">
+            <i class="fa-solid fa-circle-xmark mr-1"></i>{{
+            form.password2.errors.0 }}
+          </p>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="btn-primary w-full py-3 mt-2 text-base">
+          <i class="fa-solid fa-user-plus mr-2"></i>Buat Akun
+        </button>
+      </form>
+
+      <div
+        class="mt-6 pt-6 text-center"
+        style="border-top: 1px solid var(--border-soft)"
       >
-        Buat Akun
-      </button>
-    </form>
-
-    <p class="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
-      Sudah punya akun?
-      <a
-        href="{% url 'login_anggota' %}"
-        class="text-teal-600 dark:text-teal-400 font-semibold hover:underline"
-        >Login</a
-      >
-    </p>
+        <p class="text-sm" style="color: var(--text-muted)">
+          Sudah punya akun?
+          <a
+            href="{% url 'login_anggota' %}"
+            class="font-bold ml-1"
+            style="color: var(--teal-soft)"
+            >Login →</a
+          >
+        </p>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
