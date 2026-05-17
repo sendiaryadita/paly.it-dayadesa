@@ -1,158 +1,90 @@
-{% extends "energi/base.html" %} {% block title %}Login – DayaDesa{% endblock %}
-{% block content %}
-<div
-  class="min-h-screen flex items-center justify-center px-4 py-12"
-  style="
-    background: linear-gradient(135deg, var(--sage-light) 0%, var(--cream) 60%);
-  "
->
-  <div class="w-full max-w-md">
-    <!-- Card -->
-    <div class="card-soft p-8 fade-up">
-      <!-- Logo area -->
-      <div class="text-center mb-7">
-        <div
-          class="w-14 h-14 hero-gradient rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg"
-        >
-          <i class="fa-solid fa-leaf text-white text-xl"></i>
-        </div>
-        <h2 class="text-2xl font-black" style="color: var(--text-main)">
-          Selamat Datang Kembali
-        </h2>
-        <p class="text-sm mt-1" style="color: var(--text-muted)">
-          Masuk ke akun DayaDesa Anda
-        </p>
+{% extends "energi/base.html" %} {% block title %}Login Anggota - DayaDesa
+{%endblock %} {% block content %}
+<div class="container mx-auto px-4 py-16 max-w-md">
+  <div class="card-soft p-6 md:p-8 fade-up">
+    <div class="text-center mb-6">
+      <div
+        class="w-16 h-16 mx-auto rounded-2xl flex items-center justify-center mb-4"
+        style="background: var(--sage-light)"
+      >
+        <i
+          class="fa-solid fa-user-lock text-2xl"
+          style="color: var(--sage)"
+        ></i>
       </div>
 
-      <form method="post" class="space-y-4">
-        {% csrf_token %}
-        <div>
-          <label
-            class="block text-sm font-semibold mb-1.5"
-            style="color: var(--text-main)"
-          >
-            <i class="fa-solid fa-user mr-1.5" style="color: var(--sage)"></i
-            >Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            class="input-soft"
-            placeholder="Masukkan username Anda"
-            required
-          />
-        </div>
-        <div>
-          <label
-            class="block text-sm font-semibold mb-1.5"
-            style="color: var(--text-main)"
-          >
-            <i class="fa-solid fa-lock mr-1.5" style="color: var(--sage)"></i
-            >Password
-          </label>
-          <div class="relative">
-            <input
-              type="password"
-              name="password"
-              id="passwordField"
-              class="input-soft pr-12"
-              placeholder="Masukkan password Anda"
-              required
-            />
-            <button
-              type="button"
-              onclick="togglePassword()"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-sm"
-              style="color: var(--text-muted)"
-            >
-              <i class="fa-solid fa-eye" id="eyeIcon"></i>
-            </button>
-          </div>
-        </div>
-        <button type="submit" class="btn-primary w-full py-3 mt-2 text-base">
-          <i class="fa-solid fa-right-to-bracket mr-2"></i>Masuk
-        </button>
-      </form>
+      <h2 class="text-2xl font-black" style="color: var(--text-main)">
+        Login Anggota
+      </h2>
 
+      <p class="mt-2 text-sm" style="color: var(--text-muted)">
+        Masuk untuk membuat laporan dan berpartisipasi di forum desa.
+      </p>
+    </div>
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %} {% if form.non_field_errors %}
       <div
-        class="mt-6 pt-6 text-center"
-        style="border-top: 1px solid var(--border-soft)"
-{% extends "energi/base.html" %}
-{% block title %}Login Anggota{% endblock %}
-{% block content %}
-<div class="container mx-auto px-4 py-16 max-w-md">
-  <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-6 md:p-8">
-    <h2 class="text-2xl font-bold text-center">Masuk ke Akun</h2>
-    <form method="post" class="mt-6 space-y-4">
-      {% csrf_token %}
-      {% if form.non_field_errors %}
-      <div
-        class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-200"
+        class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700"
       >
         {{ form.non_field_errors }}
       </div>
       {% endif %}
+
       <div>
-        <label class="block font-medium">Username</label
-        ><input
+        <label
+          class="block mb-2 text-sm font-semibold"
+          style="color: var(--text-main)"
+        >
+          Username
+        </label>
+
+        <input
           type="text"
           name="username"
-          value="{{ form.username.value|default:'' }}"
-          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
           required
+          class="input-soft w-full"
+          placeholder="Masukkan username"
         />
       </div>
+
       <div>
-        <label class="block font-medium">Password</label
-        ><input
+        <label
+          class="block mb-2 text-sm font-semibold"
+          style="color: var(--text-main)"
+        >
+          Password
+        </label>
+
+        <input
           type="password"
           name="password"
-          class="w-full rounded-xl border border-slate-200 bg-slate-50 p-2 text-slate-900 placeholder-slate-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:placeholder-slate-500"
           required
+          class="input-soft w-full"
+          placeholder="Masukkan password"
         />
       </div>
-      <button
-        type="submit"
-        class="w-full bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-xl"
-      >
-        Login
+
+      <button type="submit" class="btn-primary w-full py-3 text-base">
+        <i class="fa-solid fa-right-to-bracket mr-2"></i>
+        Masuk
       </button>
     </form>
-    <p class="text-center text-sm mt-4">
-      Belum punya akun?
-      <a href="{% url 'daftar_anggota' %}" class="text-teal-600 font-semibold"
-        >Daftar</a
 
+    <div
+      class="mt-6 pt-6 text-center"
+      style="border-top: 1px solid var(--border-soft)"
+    >
+      <p class="text-sm" style="color: var(--text-muted)">Belum punya akun?</p>
+
+      <a
+        href="{% url 'daftar_anggota' %}"
+        class="inline-block mt-3 btn-soft px-5 py-2 text-sm"
       >
-        <p class="text-sm" style="color: var(--text-muted)">
-          Belum punya akun?
-          <a
-            href="{% url 'daftar_anggota' %}"
-            class="font-bold ml-1"
-            style="color: var(--teal-soft)"
-            >Daftar sekarang →</a
-          >
-        </p>
-      </div>
+        <i class="fa-solid fa-user-plus mr-1"></i>
+        Daftar Sekarang
+      </a>
     </div>
-
-    <p class="text-center text-xs mt-4" style="color: var(--text-muted)">
-      Platform Ketahanan Energi Desa Berkelanjutan 🌱
-    </p>
   </div>
 </div>
-
-<script>
-  function togglePassword() {
-    const field = document.getElementById("passwordField");
-    const icon = document.getElementById("eyeIcon");
-    if (field.type === "password") {
-      field.type = "text";
-      icon.className = "fa-solid fa-eye-slash";
-    } else {
-      field.type = "password";
-      icon.className = "fa-solid fa-eye";
-    }
-  }
-</script>
 {% endblock %}

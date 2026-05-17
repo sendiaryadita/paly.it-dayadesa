@@ -1,402 +1,178 @@
-{% extends "energi/base.html" %} {% block title %}Buat Laporan – DayaDesa
+{% extends "energi/base.html" %} {% block title %}Buat Laporan - DayaDesa
 {%endblock %} {% block extra_css %}
-<style>
-  .desa-suggestion {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1.5px solid var(--sage-mid);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(93, 143, 113, 0.15);
-    z-index: 50;
-    max-height: 200px;
-    overflow-y: auto;
-  }
-  .desa-option {
-    padding: 0.65rem 1rem;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-main);
-    transition: background 0.15s;
-    border-bottom: 1px solid var(--border-soft);
-  }
-  .desa-option:last-child {
-    border-bottom: none;
-  }
-  .desa-option:hover,
-  .desa-option.active {
-    background: var(--sage-light);
-    color: var(--teal-deep);
-  }
-  .desa-option mark {
-    background: transparent;
-    color: var(--teal-deep);
-    font-weight: 700;
-  }
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
 
-  html.dark .desa-suggestion {
-    background: #162018;
-    border-color: #2a3d2e;
-  }
-  html.dark .desa-option {
-    color: #d1e8d8;
-    border-color: #2a3d2e;
-  }
-  html.dark .desa-option:hover {
-    background: #1e3328;
+<style>
+  #laporMap {
+    height: 320px;
+    border-radius: 18px;
+    border: 1px solid var(--border-soft);
+    overflow: hidden;
   }
 </style>
 {% endblock %} {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-2xl">
-  <div class="mb-6 fade-up">
-    <h2 class="text-3xl font-black" style="color: var(--text-main)">
-      <i class="fa-solid fa-file-pen mr-2" style="color: var(--sage)"></i>Buat
-      Laporan Warga
-    </h2>
-    <p class="mt-1" style="color: var(--text-muted)">
-      Laporkan kondisi energi di desa Anda untuk pemantauan bersama
-    </p>
-  </div>
-
-  <div class="card-soft p-7 fade-up stagger-1">
-    <form method="post" class="space-y-5" id="laporanForm">
-      {% csrf_token %}
-
-      <!-- Nama Pelapor -->
-      <div>
-        <label
-          class="block text-sm font-semibold mb-1.5"
-          style="color: var(--text-main)"
-        >
-          <i class="fa-solid fa-user mr-1.5" style="color: var(--sage)"></i>Nama
-          Pelapor
-        </label>
-        <input
-          type="text"
-          name="nama_pelapor"
-          value="{{ form.nama_pelapor.value|default:'' }}"
-          class="input-soft"
-          placeholder="Masukkan nama Anda"
-          required
-        />
-        {% if form.nama_pelapor.errors %}
-        <p class="text-xs mt-1" style="color: #b84444">
-          <i class="fa-solid fa-circle-xmark mr-1"></i>{{
-          form.nama_pelapor.errors.0 }}
-        </p>
-        {% endif %}
-      </div>
-
-      <!-- Pilih Desa — dengan autocomplete, bukan dropdown terbatas -->
-      <div>
-        <label
-          class="block text-sm font-semibold mb-1.5"
-          style="color: var(--text-main)"
-        >
-          <i class="fa-solid fa-map-pin mr-1.5" style="color: var(--sage)"></i
-          >Desa
-        </label>
-        <p class="text-xs mb-2" style="color: var(--text-muted)">
-          Ketik nama desa Anda. Pilih dari daftar jika tersedia, atau ketik nama
-          desa sendiri.
-        </p>
-
-        <!-- Input teks yang user ketik -->
-        <div class="relative" id="desaWrapper">
-          <input
-            type="text"
-            id="desaSearch"
-            class="input-soft"
-            placeholder="Cari atau ketik nama desa…"
-            autocomplete="off"
-          />
-          <!-- Hidden input yang dikirim ke server -->
-          <input
-            type="hidden"
-            name="desa"
-            id="desaHidden"
-            value="{{ form.desa.value|default:'' }}"
-          />
-          <!-- Input nama desa teks bebas (untuk desa yang belum terdaftar) -->
-          <input
-            type="hidden"
-            name="nama_desa_manual"
-            id="desaManual"
-            value=""
-          />
-
-          <div id="desaSuggestions" class="desa-suggestion hidden"></div>
-        </div>
-
-        <!-- Desa yang dipilih -->
-        <div
-          id="desaSelected"
-          class="hidden mt-2 flex items-center gap-2 px-3 py-2 rounded-xl text-sm"
-          style="background: var(--sage-light); color: var(--teal-deep)"
-        >
-          <i class="fa-solid fa-check-circle"></i>
-          <span id="desaSelectedLabel"></span>
-          <button
-            type="button"
-            onclick="clearDesa()"
-            class="ml-auto text-xs"
-            style="color: var(--text-muted)"
-          >
-            ✕ Ganti
-          </button>
-{% extends "energi/base.html" %}
-{% block title %}Buat Laporan &bull; DayaDesa{% endblock %}
-{% block content %}
 <div class="container mx-auto max-w-3xl px-4 py-12">
-  <div class="overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-xl transition-all duration-300 dark:border-slate-700 dark:bg-slate-800">
-    <div class="border-b border-emerald-100 bg-gradient-to-r from-teal-50 to-white p-6 dark:border-slate-700 dark:from-slate-800 dark:to-slate-800">
-      <h2 class="text-2xl font-bold text-teal-800 dark:text-teal-300">Citizen Report</h2>
-      <p class="text-slate-500 dark:text-slate-400">Laporkan kondisi energi desa Anda</p>
+  <div
+    class="overflow-hidden rounded-3xl border bg-white shadow-xl"
+    style="border-color: var(--border-soft)"
+  >
+    <div
+      class="border-b p-6"
+      style="
+        border-color: var(--border-soft);
+        background: linear-gradient(
+          135deg,
+          rgba(91, 158, 123, 0.08),
+          rgba(61, 122, 95, 0.03)
+        );
+      "
+    >
+      <h1 class="text-3xl font-black" style="color: var(--text-main)">
+        <i
+          class="fa-solid fa-file-circle-plus mr-2"
+          style="color: var(--sage)"
+        ></i>
+        Buat Laporan Warga
+      </h1>
+
+      <p class="mt-2 text-sm leading-relaxed" style="color: var(--text-muted)">
+        Laporkan kondisi energi desa Anda. Klik titik pada peta agar koordinat
+        desa tersimpan lebih akurat.
+      </p>
     </div>
 
     <div class="p-6 md:p-8">
-      {% if selected_desa %}
-      <div class="mb-5 rounded-xl bg-emerald-50 p-4 text-sm font-medium text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-200">
-        Laporan akan diarahkan ke <strong>{{ selected_desa.nama_desa }}</strong>
+      {% if messages %} {% for message in messages %}
+      <div
+        class="mb-5 rounded-2xl border p-4 text-sm"
+        style="border-color: #b7ebc6; background: #edfdf3; color: #256c42"
+      >
+        {{ message }}
       </div>
-      {% endif %}
+      {% endfor %} {% endif %}
 
       <form method="post" class="space-y-5">
-        {% csrf_token %}
+        {% csrf_token %} {{ form.non_field_errors }}
+
         <div>
-          <label class="mb-1 block font-semibold">{{ form.desa.label }}</label>
-          {{ form.desa }}
-          {{ form.desa.errors }}
+          <label class="mb-2 block text-sm font-semibold">Nama Pelapor</label>
+          {{ form.nama_pelapor }} {{ form.nama_pelapor.errors }}
         </div>
+
         <div>
-          <label class="block font-semibold">{{ form.nama_pelapor.label }}</label>
-          {{ form.nama_pelapor }}
-          {{ form.nama_pelapor.errors }}
+          <label class="mb-2 block text-sm font-semibold">Pilih Desa</label>
+          {{ form.desa }} {{ form.desa.errors }}
         </div>
+
         <div>
-          <label class="block font-semibold">{{ form.kategori_laporan.label }}</label>
-          {{ form.kategori_laporan }}
-          {{ form.kategori_laporan.errors }}
+          <label class="mb-2 block text-sm font-semibold">
+            Atau Tulis Desa Baru
+          </label>
+          <input
+            type="text"
+            name="nama_desa_manual"
+            class="input-soft w-full"
+            placeholder="Contoh: Desa Sukamaju"
+          />
         </div>
+
         <div>
-          <label class="block font-semibold">{{ form.isi_laporan.label }}</label>
-          {{ form.isi_laporan }}
-          {{ form.isi_laporan.errors }}
+          <label class="mb-2 block text-sm font-semibold">
+            Tentukan Titik Koordinat
+          </label>
+
+          <p class="mb-3 text-sm" style="color: var(--text-muted)">
+            Klik lokasi desa pada peta. Latitude dan longitude akan terisi
+            otomatis.
+          </p>
+
+          <div id="laporMap"></div>
         </div>
-        <div class="flex gap-3 pt-2">
-          <button
-            type="submit"
-            class="rounded-xl bg-teal-600 px-6 py-2 text-white shadow transition hover:bg-teal-700"
-          >
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="mb-2 block text-sm font-semibold">Latitude</label>
+            <input
+              type="number"
+              step="any"
+              id="latitude"
+              name="latitude"
+              class="input-soft w-full"
+              placeholder="-5.113"
+            />
+          </div>
+
+          <div>
+            <label class="mb-2 block text-sm font-semibold">Longitude</label>
+            <input
+              type="number"
+              step="any"
+              id="longitude"
+              name="longitude"
+              class="input-soft w-full"
+              placeholder="105.306"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-semibold">
+            Kategori Laporan
+          </label>
+          {{ form.kategori_laporan }} {{ form.kategori_laporan.errors }}
+        </div>
+
+        <div>
+          <label class="mb-2 block text-sm font-semibold">Isi Laporan</label>
+          {{ form.isi_laporan }} {{ form.isi_laporan.errors }}
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+          <a href="{% url 'daftar_laporan' %}" class="btn-soft px-5 py-3">
+            Batal
+          </a>
+
+          <button type="submit" class="btn-primary px-6 py-3">
+            <i class="fa-solid fa-paper-plane mr-2"></i>
             Kirim Laporan
           </button>
-          <a
-            href="{% url 'peta_energi' %}"
-            class="rounded-xl border border-slate-300 px-5 py-2 hover:bg-slate-50 dark:border-slate-600 dark:hover:bg-slate-700"
-          >
-            Kembali
-          </a>
         </div>
-
-        {% if form.desa.errors %}
-        <p class="text-xs mt-1" style="color: #b84444">
-          <i class="fa-solid fa-circle-xmark mr-1"></i>{{ form.desa.errors.0 }}
-        </p>
-        {% endif %}
-      </div>
-
-      <!-- Kategori Laporan -->
-      <div>
-        <label
-          class="block text-sm font-semibold mb-1.5"
-          style="color: var(--text-main)"
-        >
-          <i class="fa-solid fa-tag mr-1.5" style="color: var(--sage)"></i
-          >Kategori Laporan
-        </label>
-        <select name="kategori_laporan" class="input-soft">
-          {% for val, label in form.kategori_laporan.field.choices %}
-          <option
-            value="{{ val }}"
-            {%
-            if
-            form.kategori_laporan.value=""
-            ="val"
-            %}selected{%
-            endif
-            %}
-          >
-            {{ label }}
-          </option>
-          {% endfor %}
-        </select>
-        {% if form.kategori_laporan.errors %}
-        <p class="text-xs mt-1" style="color: #b84444">
-          <i class="fa-solid fa-circle-xmark mr-1"></i>{{
-          form.kategori_laporan.errors.0 }}
-        </p>
-        {% endif %}
-      </div>
-
-      <!-- Isi Laporan -->
-      <div>
-        <label
-          class="block text-sm font-semibold mb-1.5"
-          style="color: var(--text-main)"
-        >
-          <i
-            class="fa-solid fa-pen-to-square mr-1.5"
-            style="color: var(--sage)"
-          ></i
-          >Isi Laporan
-        </label>
-        <textarea
-          name="isi_laporan"
-          rows="5"
-          class="input-soft"
-          style="resize: vertical; min-height: 120px"
-          placeholder="Ceritakan kondisi energi yang terjadi di desa Anda…"
-          required
-        >
-{{ form.isi_laporan.value|default:'' }}</textarea
-        >
-        {% if form.isi_laporan.errors %}
-        <p class="text-xs mt-1" style="color: #b84444">
-          <i class="fa-solid fa-circle-xmark mr-1"></i>{{
-          form.isi_laporan.errors.0 }}
-        </p>
-        {% endif %}
-      </div>
-
-      <button type="submit" class="btn-primary w-full py-3 text-base mt-2">
-        <i class="fa-solid fa-paper-plane mr-2"></i>Kirim Laporan
-      </button>
-    </form>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %} {% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-  (function () {
-    // Data desa dari database
-    const desaDB = [
-      {% for desa in form.desa.field.queryset %}
-      { id: "{{ desa.id }}", nama: "{{ desa.nama_desa }}", kecamatan: "{{ desa.kecamatan }}", kabupaten: "{{ desa.kabupaten }}" },
-      {% endfor %}
-    ];
+  const defaultLat = -5.113;
+  const defaultLng = 105.306;
 
-    const searchInput  = document.getElementById("desaSearch");
-    const hiddenInput  = document.getElementById("desaHidden");
-    const manualInput  = document.getElementById("desaManual");
-    const suggestions  = document.getElementById("desaSuggestions");
-    const selectedBox  = document.getElementById("desaSelected");
-    const selectedLabel = document.getElementById("desaSelectedLabel");
+  const map = L.map("laporMap").setView([defaultLat, defaultLng], 10);
 
-    // Isi awal jika ada nilai dari form (misal setelah error)
-    const initVal = hiddenInput.value;
-    if (initVal) {
-      const found = desaDB.find(d => d.id == initVal);
-      if (found) selectDesa(found.id, found.nama + " – " + found.kecamatan);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap",
+  }).addTo(map);
+
+  let marker = null;
+
+  function setCoordinate(lat, lng) {
+    document.getElementById("latitude").value = lat.toFixed(6);
+    document.getElementById("longitude").value = lng.toFixed(6);
+
+    if (marker) {
+      marker.setLatLng([lat, lng]);
+    } else {
+      marker = L.marker([lat, lng]).addTo(map);
     }
+  }
 
-    function highlight(text, query) {
-      if (!query) return text;
-      const re = new RegExp("(" + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ")", "gi");
-      return text.replace(re, "<mark>$1</mark>");
-    }
-
-    function showSuggestions(query) {
-      const q = query.toLowerCase().trim();
-      suggestions.innerHTML = "";
-
-      if (!q) { suggestions.classList.add("hidden"); return; }
-
-      const filtered = desaDB.filter(d =>
-        d.nama.toLowerCase().includes(q) ||
-        d.kecamatan.toLowerCase().includes(q) ||
-        d.kabupaten.toLowerCase().includes(q)
-      ).slice(0, 8);
-
-      if (filtered.length === 0) {
-        // Opsi "gunakan nama ini"
-        suggestions.innerHTML = `
-          <div class="desa-option" onclick="useManual('${query.replace(/'/g,"\\'")}')">
-            <i class="fa-solid fa-plus mr-2" style="color:var(--teal-soft)"></i>
-            Gunakan "<strong>${query}</strong>" sebagai nama desa
-          </div>`;
-      } else {
-        filtered.forEach(d => {
-          const div = document.createElement("div");
-          div.className = "desa-option";
-          div.innerHTML = `
-            <div class="font-semibold">${highlight(d.nama, q)}</div>
-            <div class="text-xs" style="color:var(--text-muted)">${d.kecamatan}, ${d.kabupaten}</div>`;
-          div.addEventListener("mousedown", (e) => {
-            e.preventDefault();
-            selectDesa(d.id, d.nama + " – " + d.kecamatan + ", " + d.kabupaten);
-          });
-          suggestions.appendChild(div);
-        });
-
-        // Tambah opsi manual di bawah
-        const manual = document.createElement("div");
-        manual.className = "desa-option";
-        manual.style.cssText = "border-top:2px solid var(--border-soft); color:var(--text-muted)";
-        manual.innerHTML = `<i class="fa-solid fa-keyboard mr-2"></i>Desa tidak ada? Ketik nama desa sendiri`;
-        manual.addEventListener("mousedown", (e) => {
-          e.preventDefault();
-          useManual(query);
-        });
-        suggestions.appendChild(manual);
-      }
-
-      suggestions.classList.remove("hidden");
-    }
-
-    function selectDesa(id, label) {
-      hiddenInput.value  = id;
-      manualInput.value  = "";
-      searchInput.value  = "";
-      selectedLabel.textContent = label;
-      selectedBox.classList.remove("hidden");
-      suggestions.classList.add("hidden");
-    }
-
-    window.useManual = function (nama) {
-      hiddenInput.value  = "";
-      manualInput.value  = nama;
-      searchInput.value  = "";
-      selectedLabel.textContent = nama + " (input manual)";
-      selectedBox.classList.remove("hidden");
-      suggestions.classList.add("hidden");
-    };
-
-    window.clearDesa = function () {
-      hiddenInput.value  = "";
-      manualInput.value  = "";
-      searchInput.value  = "";
-      selectedBox.classList.add("hidden");
-      searchInput.focus();
-    };
-
-    searchInput.addEventListener("input", () => showSuggestions(searchInput.value));
-    searchInput.addEventListener("focus", () => { if (searchInput.value) showSuggestions(searchInput.value); });
-    searchInput.addEventListener("blur",  () => setTimeout(() => suggestions.classList.add("hidden"), 150));
-
-    // Validasi sebelum submit — pastikan desa terisi
-    document.getElementById("laporanForm").addEventListener("submit", function (e) {
-      if (!hiddenInput.value && !manualInput.value) {
-        e.preventDefault();
-        searchInput.focus();
-        searchInput.style.borderColor = "#b84444";
-        searchInput.placeholder = "⚠ Pilih atau ketik nama desa dulu";
-        setTimeout(() => {
-          searchInput.style.borderColor = "";
-          searchInput.placeholder = "Cari atau ketik nama desa…";
-        }, 3000);
-      }
-    });
-  })();
+  map.on("click", function (event) {
+    setCoordinate(event.latlng.lat, event.latlng.lng);
+  });
 </script>
 {% endblock %}

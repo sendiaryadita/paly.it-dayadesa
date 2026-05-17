@@ -1,282 +1,258 @@
-{% extends "energi/base.html" %} {% block title %}Tentang – DayaDesa
-{%endblock%} {% block content %}
-<div class="container mx-auto px-4 py-10 max-w-5xl">
+{% extends "energi/base.html" %}
+
+{% block title %}Tentang - DayaDesa{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-10">
+
   <!-- Hero -->
   <div
-    class="hero-gradient hero-pattern rounded-3xl p-8 md:p-12 mb-8 shadow-lg fade-up text-white"
+    class="rounded-3xl p-8 md:p-12 text-white shadow-xl fade-up"
+    style="
+      background: linear-gradient(
+        135deg,
+        #5b9e7b 0%,
+        #3d7a5f 50%,
+        #2a5e47 100%
+      );
+    "
   >
-    <div
-      class="text-sm font-semibold uppercase tracking-widest mb-2"
-      style="color: rgba(255, 255, 255, 0.7)"
-    >
-      <i class="fa-solid fa-seedling mr-1.5"></i>Platform Energi Desa
-    </div>
-    <h1 class="text-3xl md:text-4xl font-black mb-3">Tentang DayaDesa</h1>
-    <p
-      style="
-        color: rgba(255, 255, 255, 0.85);
-        max-width: 600px;
-        line-height: 1.7;
-      "
-    >
-      Platform geospasial ketahanan energi desa berbasis partisipasi warga aktif
-      — mewujudkan desa mandiri energi melalui data dan kolaborasi.
-    </p>
-  </div>
+    <div class="max-w-3xl">
+      <h1 class="text-4xl md:text-5xl font-black leading-tight">
+        Tentang DayaDesa
+      </h1>
 
-  <!-- Apa itu -->
-  <div class="grid md:grid-cols-2 gap-5 mb-6">
-    <div class="card-soft p-6 fade-up">
-      <div class="stat-icon mb-4" style="background: var(--sage-light)">
-        <i
-          class="fa-solid fa-circle-question"
-          style="color: var(--teal-soft)"
-        ></i>
-      </div>
-      <h3 class="font-bold text-lg mb-2" style="color: var(--text-main)">
-        Apa itu DayaDesa?
-      </h3>
-      <p class="text-sm leading-relaxed" style="color: var(--text-muted)">
-        Sistem informasi visualisasi
-        <strong>ESI (Energy Security Index)</strong> dengan 4 pilar utama:
-        Ketersediaan, Keterjangkauan, Keberlanjutan, dan Keandalan energi di
-        tingkat desa.
+      <p class="mt-4 text-lg text-emerald-50 leading-relaxed">
+        DayaDesa adalah platform sistem informasi ketahanan energi desa
+        berbasis partisipasi masyarakat untuk membantu pemantauan kondisi
+        energi desa secara transparan, cepat, dan berkelanjutan.
       </p>
     </div>
-    <div class="card-soft p-6 fade-up stagger-1">
-      <div class="stat-icon mb-4" style="background: #fef3e2">
-        <i class="fa-solid fa-trophy" style="color: #b06d28"></i>
-{% extends "energi/base.html" %}
-{% block content %}
-<div class="container mx-auto max-w-5xl px-4 py-12">
-  <div class="rounded-2xl bg-white p-6 shadow dark:bg-slate-800">
-    <h1 class="text-3xl font-bold text-teal-800 dark:text-teal-300">
-      &#127793; Tentang DayaDesa
-    </h1>
-    <p class="mt-2 text-slate-600 dark:text-slate-300">
-      Platform geospasial ketahanan energi desa berbasis partisipasi warga.
-    </p>
+  </div>
 
-    <div class="mt-6 grid gap-5 md:grid-cols-2">
-      <div>
-        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
-          Apa itu DayaDesa?
-        </h3>
-        <p class="mt-2 text-slate-600 dark:text-slate-300">
-          Sistem informasi visualisasi ESI (Energy Security Index) dengan 4
-          pilar: Ketersediaan, Keterjangkauan, Keberlanjutan, Keandalan.
-        </p>
+  <!-- Visi Misi -->
+  <div class="grid md:grid-cols-2 gap-6 mt-8">
+
+    <!-- Visi -->
+    <div class="card-soft p-6 fade-up">
+      <div
+        class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+        style="background: var(--sage-light);"
+      >
+        <i
+          class="fa-solid fa-eye text-2xl"
+          style="color: var(--sage);"
+        ></i>
       </div>
-      <div>
-        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">
-          Manfaat
-        </h3>
-        <ul class="mt-2 list-disc space-y-1 pl-5 text-slate-600 dark:text-slate-300">
-          <li>Pemetaan kondisi energi desa</li>
-          <li>Laporan warga realtime</li>
-          <li>Rekomendasi kebijakan</li>
-        </ul>
+
+      <h2
+        class="text-2xl font-bold mb-3"
+        style="color: var(--text-main);"
+      >
+        Visi
+      </h2>
+
+      <p
+        class="leading-relaxed"
+        style="color: var(--text-muted);"
+      >
+        Menjadi platform digital yang mendukung ketahanan energi desa
+        berbasis data, partisipasi masyarakat, dan pembangunan
+        berkelanjutan.
+      </p>
+    </div>
+
+    <!-- Misi -->
+    <div class="card-soft p-6 fade-up">
+      <div
+        class="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+        style="background: #fef3e2;"
+      >
+        <i
+          class="fa-solid fa-bullseye text-2xl"
+          style="color: #c97a28;"
+        ></i>
       </div>
-      <h3 class="font-bold text-lg mb-2" style="color: var(--text-main)">
-        Manfaat Platform
-      </h3>
-      <ul class="space-y-2 text-sm" style="color: var(--text-muted)">
-        <li class="flex items-center gap-2">
-          <i class="fa-solid fa-check" style="color: var(--teal-soft)"></i>
-          Pemetaan kondisi energi desa secara visual
+
+      <h2
+        class="text-2xl font-bold mb-3"
+        style="color: var(--text-main);"
+      >
+        Misi
+      </h2>
+
+      <ul
+        class="space-y-3 leading-relaxed"
+        style="color: var(--text-muted);"
+      >
+        <li>
+          <i class="fa-solid fa-check mr-2 text-emerald-600"></i>
+          Memantau kondisi energi desa secara real-time.
         </li>
-        <li class="flex items-center gap-2">
-          <i class="fa-solid fa-check" style="color: var(--teal-soft)"></i>
-          Laporan warga secara real-time
+
+        <li>
+          <i class="fa-solid fa-check mr-2 text-emerald-600"></i>
+          Mendorong partisipasi warga dalam pelaporan kondisi energi.
         </li>
-        <li class="flex items-center gap-2">
-          <i class="fa-solid fa-check" style="color: var(--teal-soft)"></i>
-          Rekomendasi kebijakan berbasis data
+
+        <li>
+          <i class="fa-solid fa-check mr-2 text-emerald-600"></i>
+          Menyediakan data ketahanan energi berbasis ESI.
         </li>
-        <li class="flex items-center gap-2">
-          <i class="fa-solid fa-check" style="color: var(--teal-soft)"></i>
-          Forum diskusi & kolaborasi anggota
+
+        <li>
+          <i class="fa-solid fa-check mr-2 text-emerald-600"></i>
+          Mendukung pengambilan keputusan berbasis data.
         </li>
       </ul>
     </div>
   </div>
 
-  <!-- 4 Pilar ESI -->
-  <div class="card-soft p-6 mb-6 fade-up">
-    <h3 class="font-bold text-lg mb-5" style="color: var(--text-main)">
-      <i class="fa-solid fa-columns mr-2" style="color: var(--sage)"></i>4 Pilar
-      Energy Security Index (ESI)
-    </h3>
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {% for pilar in pilar_list|default:"" %}{% empty %}
-      <div
-        class="p-4 rounded-2xl text-center fade-up"
-        style="background: var(--sage-light)"
-      >
-        <i
-          class="fa-solid fa-plug text-2xl mb-2"
-          style="color: var(--teal-soft)"
-        ></i>
-        <div class="font-bold text-sm" style="color: var(--teal-deep)">
-          Ketersediaan
-        </div>
-        <div class="text-xs mt-1" style="color: var(--text-muted)">
-          Akses & pasokan energi
-        </div>
-      </div>
-      <div
-        class="p-4 rounded-2xl text-center fade-up stagger-1"
-        style="background: #fef3e2"
-      >
-        <i class="fa-solid fa-coins text-2xl mb-2" style="color: #b06d28"></i>
-        <div class="font-bold text-sm" style="color: #8b5522">
-          Keterjangkauan
-        </div>
-        <div class="text-xs mt-1" style="color: var(--text-muted)">
-          Harga & subsidi energi
-        </div>
-      </div>
-      <div
-        class="p-4 rounded-2xl text-center fade-up stagger-2"
-        style="background: #e3f5ea"
-      >
-        <i class="fa-solid fa-recycle text-2xl mb-2" style="color: #2d7a55"></i>
-        <div class="font-bold text-sm" style="color: #2d7a55">
-          Keberlanjutan
-        </div>
-        <div class="text-xs mt-1" style="color: var(--text-muted)">
-          Energi baru terbarukan
+  <!-- Fitur -->
+  <div class="mt-10 fade-up">
+    <h2
+      class="text-3xl font-black mb-6"
+      style="color: var(--text-main);"
+    >
+      Fitur Utama
+    </h2>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <div class="card-soft p-5">
+        <div
+          class="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+          style="background: var(--sage-light);"
+        >
+          <i
+            class="fa-solid fa-chart-line"
+            style="color: var(--sage);"
+          ></i>
         </div>
 
-    <div class="mt-8 rounded-xl bg-emerald-50 p-5 dark:bg-emerald-900/20">
-      <h3 class="font-bold text-slate-800 dark:text-slate-100">Alur Kerja</h3>
-      <div class="mt-3 flex flex-wrap items-center justify-between gap-4 text-slate-600 dark:text-slate-300">
-        <div class="text-center">1. Input Data Desa</div>
-        <div>&rarr;</div>
-        <div>2. Hitung ESI</div>
-        <div>&rarr;</div>
-        <div>3. Peta &amp; Indeks</div>
-        <div>&rarr;</div>
-        <div>4. Citizen Report</div>
+        <h3
+          class="font-bold mb-2"
+          style="color: var(--text-main);"
+        >
+          Dashboard ESI
+        </h3>
+
+        <p class="text-sm" style="color: var(--text-muted);">
+          Menampilkan indeks ketahanan energi desa secara visual.
+        </p>
       </div>
-      <div
-        class="p-4 rounded-2xl text-center fade-up stagger-3"
-        style="background: #fde8e8"
-      >
-        <i
-          class="fa-solid fa-shield-halved text-2xl mb-2"
-          style="color: #b84444"
-        ></i>
-        <div class="font-bold text-sm" style="color: #b84444">Keandalan</div>
-        <div class="text-xs mt-1" style="color: var(--text-muted)">
-          Stabilitas pasokan energi
+
+      <div class="card-soft p-5">
+        <div
+          class="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+          style="background: #fef3e2;"
+        >
+          <i
+            class="fa-solid fa-map-location-dot"
+            style="color: #c97a28;"
+          ></i>
         </div>
+
+        <h3
+          class="font-bold mb-2"
+          style="color: var(--text-main);"
+        >
+          Peta Energi
+        </h3>
+
+        <p class="text-sm" style="color: var(--text-muted);">
+          Visualisasi lokasi dan kondisi energi desa berbasis peta.
+        </p>
       </div>
-      {% endfor %}
+
+      <div class="card-soft p-5">
+        <div
+          class="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+          style="background: #e8f0ff;"
+        >
+          <i
+            class="fa-solid fa-file-circle-plus"
+            style="color: #4d74c9;"
+          ></i>
+        </div>
+
+        <h3
+          class="font-bold mb-2"
+          style="color: var(--text-main);"
+        >
+          Laporan Warga
+        </h3>
+
+        <p class="text-sm" style="color: var(--text-muted);">
+          Warga dapat membuat laporan terkait kondisi energi desa.
+        </p>
+      </div>
+
+      <div class="card-soft p-5">
+        <div
+          class="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
+          style="background: #fde8e8;"
+        >
+          <i
+            class="fa-solid fa-comments"
+            style="color: #c95d5d;"
+          ></i>
+        </div>
+
+        <h3
+          class="font-bold mb-2"
+          style="color: var(--text-main);"
+        >
+          Forum Diskusi
+        </h3>
+
+        <p class="text-sm" style="color: var(--text-muted);">
+          Ruang diskusi warga untuk berbagi informasi dan solusi energi.
+        </p>
+      </div>
+
     </div>
   </div>
 
-  <!-- Alur Kerja -->
-  <div class="card-soft p-6 mb-6 fade-up">
-    <h3 class="font-bold text-lg mb-6" style="color: var(--text-main)">
-      <i class="fa-solid fa-diagram-project mr-2" style="color: var(--sage)"></i
-      >Alur Kerja Platform
-    </h3>
-    <div class="flex flex-wrap gap-4 items-center justify-center">
-      {% for step in steps|default:"" %}{% empty %}
-      <div class="flex items-center gap-3">
-        <div class="text-center">
-          <div
-            class="w-12 h-12 rounded-2xl hero-gradient flex items-center justify-center mx-auto mb-2"
-          >
-            <i class="fa-solid fa-database text-white text-sm"></i>
-          </div>
-          <div class="text-xs font-semibold" style="color: var(--text-main)">
-            Input Data Desa
-          </div>
-        </div>
+  <!-- Tim -->
+  <div class="mt-12 fade-up">
+    <div class="card-soft p-8 text-center">
+
+      <div
+        class="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-5"
+        style="background: var(--sage-light);"
+      >
         <i
-          class="fa-solid fa-arrow-right text-lg"
-          style="color: var(--sage-mid)"
+          class="fa-solid fa-leaf text-4xl"
+          style="color: var(--sage);"
         ></i>
-        <div class="text-center">
-          <div
-            class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2"
-            style="background: #fef3e2"
-          >
-            <i class="fa-solid fa-calculator text-amber-600 text-sm"></i>
-          </div>
-          <div class="text-xs font-semibold" style="color: var(--text-main)">
-            Hitung ESI
-          </div>
-        </div>
-        <i
-          class="fa-solid fa-arrow-right text-lg"
-          style="color: var(--sage-mid)"
-        ></i>
-        <div class="text-center">
-          <div
-            class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2"
-            style="background: #e3f5ea"
-          >
-            <i class="fa-solid fa-map text-green-700 text-sm"></i>
-          </div>
-          <div class="text-xs font-semibold" style="color: var(--text-main)">
-            Peta & Indeks
-          </div>
-        </div>
-        <i
-          class="fa-solid fa-arrow-right text-lg"
-          style="color: var(--sage-mid)"
-        ></i>
-        <div class="text-center">
-          <div
-            class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2"
-            style="background: #fde8e8"
-          >
-            <i class="fa-solid fa-people-group text-red-500 text-sm"></i>
-          </div>
-          <div class="text-xs font-semibold" style="color: var(--text-main)">
-            Citizen Report
-          </div>
-        </div>
-        <i
-          class="fa-solid fa-arrow-right text-lg"
-          style="color: var(--sage-mid)"
-        ></i>
-        <div class="text-center">
-          <div
-            class="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2"
-            style="background: var(--sage-light)"
-          >
-            <i
-              class="fa-solid fa-comments"
-              style="color: var(--teal-soft); font-size: 0.9rem"
-            ></i>
-          </div>
-          <div class="text-xs font-semibold" style="color: var(--text-main)">
-            Forum Diskusi
-          </div>
-        </div>
       </div>
-      {% endfor %}
+
+      <h2
+        class="text-2xl font-black mb-3"
+        style="color: var(--text-main);"
+      >
+        DayaDesa
+      </h2>
+
+      <p
+        class="max-w-2xl mx-auto leading-relaxed"
+        style="color: var(--text-muted);"
+      >
+        Dibangun sebagai platform sistem informasi geospasial ketahanan
+        energi desa untuk mendukung pembangunan desa berkelanjutan,
+        transparan, dan partisipatif.
+      </p>
+
+      <div
+        class="mt-6 text-sm"
+        style="color: var(--text-muted);"
+      >
+        © 2026 DayaDesa — Sistem Informasi Ketahanan Energi Desa
+      </div>
+
     </div>
   </div>
 
-  <!-- CTA -->
-  <div class="text-center fade-up">
-    <a
-      href="{% url 'dashboard' %}"
-      class="btn-primary inline-flex items-center gap-2 px-8 py-3 text-base"
-    >
-      <i class="fa-solid fa-house-chimney"></i> Kembali ke Dashboard
-    </a>
-    <a
-      href="{% url 'forum' %}"
-      class="btn-soft inline-flex items-center gap-2 px-8 py-3 text-base ml-3"
-    >
-      <i class="fa-solid fa-comments"></i> Ikut Diskusi
-    </a>
-  </div>
 </div>
 {% endblock %}

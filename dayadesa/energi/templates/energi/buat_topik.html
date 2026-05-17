@@ -1,0 +1,58 @@
+{% extends "energi/base.html" %} {% block title %}Buat Topik - DayaDesa
+{%endblock %} {% block content %}
+<div class="container mx-auto max-w-3xl px-4 py-12">
+  <div class="card-soft p-6 md:p-8">
+    <h1 class="text-3xl font-black mb-2" style="color: var(--text-main)">
+      Buat Topik Baru
+    </h1>
+
+    <p class="mb-6 text-sm" style="color: var(--text-muted)">
+      Bagikan pertanyaan, ide, atau pengalaman seputar energi desa.
+    </p>
+
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+
+      <div>
+        <label class="mb-2 block text-sm font-semibold">Judul Topik</label>
+        <input
+          type="text"
+          name="judul"
+          class="input-soft w-full"
+          placeholder="Contoh: Cara menerapkan energi bersih di rumah"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="mb-2 block text-sm font-semibold">Kategori</label>
+        <select name="kategori" class="input-soft w-full">
+          <option value="Umum">Umum</option>
+          <option value="Energi">Energi</option>
+          <option value="Laporan">Laporan</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="mb-2 block text-sm font-semibold">Isi Topik</label>
+        <textarea
+          name="isi"
+          rows="6"
+          class="input-soft w-full"
+          placeholder="Tulis isi topik..."
+          required
+        ></textarea>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <a href="{% url 'forum' %}" class="btn-soft px-5 py-3">Batal</a>
+
+        <button type="submit" class="btn-primary px-6 py-3">
+          <i class="fa-solid fa-paper-plane mr-2"></i>
+          Kirim Topik
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

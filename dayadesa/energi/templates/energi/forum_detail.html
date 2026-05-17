@@ -1,188 +1,107 @@
-{% extends "energi/base.html" %} {% block title %} {{
-topik.judul|default:"Detail Forum" }} – DayaDesa{% endblock %} {% block
-extra_css %}
-<style>
-  .avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    color: white;
-    flex-shrink: 0;
-  }
-  .reply-bubble {
-    background: var(--cream);
-    border: 1px solid var(--border-soft);
-    border-radius: 16px;
-    padding: 1rem 1.25rem;
-  }
-  .reply-bubble:hover {
-    border-color: var(--sage-mid);
-  }
-  html.dark .reply-bubble {
-    background: #0e1a14;
-    border-color: #2a3d2e;
-  }
-</style>
-{% endblock %} {% block content %}
-<div class="container mx-auto px-4 py-8 max-w-3xl">
-  <!-- Breadcrumb -->
-  <nav
-    class="flex items-center gap-2 text-sm mb-5 fade-up"
-    style="color: var(--text-muted)"
-  >
-    <a href="{% url 'forum' %}" style="color: var(--teal-soft)"
-      ><i class="fa-solid fa-comments mr-1"></i>Forum</a
-    >
-    <i class="fa-solid fa-chevron-right text-xs"></i>
-    <span class="truncate">{{ topik.judul|default:"Detail Topik" }}</span>
-  </nav>
+{% extends "energi/base.html" %}
 
-  <!-- Topik Utama -->
-  <div
-    class="card-soft p-6 mb-5 fade-up"
-    style="border-left: 4px solid var(--sage)"
-  >
-    <div class="flex items-start gap-4">
-      <div class="avatar" style="background: var(--teal-soft); font-size: 1rem">
-        {{
-        topik.penulis.first_name|default:topik.penulis.username|default:"A"|first|upper
-        }}
-      </div>
-      <div class="flex-1">
-        <div class="flex items-center gap-2 mb-1 flex-wrap">
-          <span class="font-bold" style="color: var(--text-main)"
-            >{{
-            topik.penulis.first_name|default:topik.penulis.username|default:"Admin"
-            }}</span
-          >
-          <span class="text-xs" style="color: var(--text-muted)"
-            >{{ topik.dibuat_pada|timesince|default:"baru saja" }} lalu</span
-          >
-          <span
-            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold"
-            style="background: var(--sage-light); color: var(--teal-deep)"
-          >
-            {{ topik.kategori|default:"Energi" }}
-          </span>
-        </div>
-        <h1
-          class="text-xl md:text-2xl font-black mb-3 leading-snug"
-          style="color: var(--text-main)"
-        >
-          {{ topik.judul|default:"Judul Topik" }}
-        </h1>
-        <div
-          class="text-sm leading-relaxed"
-          style="color: var(--text-main); white-space: pre-line"
-        >
-          {{ topik.isi|default:"Isi topik diskusi di sini." }}
-        </div>
-      </div>
+{% block title %}Detail Forum - DayaDesa{% endblock %}
+
+{% block content %}
+<div class="container mx-auto max-w-4xl px-4 py-10">
+
+  <a href="{% url 'forum' %}" class="btn-soft inline-block mb-5 px-4 py-2 text-sm">
+    <i class="fa-solid fa-arrow-left mr-1"></i>
+    Kembali ke Forum
+  </a>
+
+  <div class="card-soft p-6 mb-6">
+    <span class="badge badge-mandiri">
+      {{ topik.kategori|default:"Umum" }}
+    </span>
+
+    <h1 class="text-3xl font-black mt-3 mb-3" style="color: var(--text-main);">
+      {{ topik.judul }}
+    </h1>
+
+    <div class="flex flex-wrap gap-4 text-sm mb-5" style="color: var(--text-muted);">
+      <span>
+        <i class="fa-solid fa-user mr-1"></i>
+        {{ topik.penulis.username }}
+      </span>
+
+      <span>
+        <i class="fa-solid fa-clock mr-1"></i>
+        {{ topik.dibuat_pada|timesince }} lalu
+      </span>
     </div>
+
+    <p class="leading-relaxed" style="color: var(--text-main);">
+      {{ topik.isi }}
+    </p>
   </div>
 
-  <!-- Jumlah balasan -->
-  <div class="flex items-center justify-between mb-4 fade-up">
-    <h2 class="font-bold text-base" style="color: var(--text-main)">
-      <i class="fa-solid fa-comment mr-1.5" style="color: var(--sage)"></i>
-      {{ topik.balasan.count|default:0 }} Balasan
+  <div class="card-soft p-6 mb-6">
+    <h2 class="text-xl font-bold mb-4" style="color: var(--text-main);">
+      <i class="fa-solid fa-comments mr-2" style="color: var(--sage);"></i>
+      Balasan
     </h2>
-  </div>
 
-  <!-- Balasan -->
-  <div class="space-y-3 mb-7">
-    {% if topik.balasan.all %} {% for balasan in topik.balasan.all %}
-    <div class="reply-bubble fade-up">
-      <div class="flex items-start gap-3">
-        <div
-          class="avatar"
-          style="background: hsl({{ balasan.id|add:'150' }}, 35%, 55%); width:34px; height:34px; font-size:0.8rem"
-        >
-          {{
-          balasan.penulis.first_name|default:balasan.penulis.username|first|upper
-          }}
-        </div>
-        <div class="flex-1">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="font-semibold text-sm" style="color: var(--text-main)"
-              >{{ balasan.penulis.first_name|default:balasan.penulis.username
-              }}</span
-            >
-            <span class="text-xs" style="color: var(--text-muted)"
-              >{{ balasan.dibuat_pada|timesince }} lalu</span
-            >
+    {% if balasan_list %}
+      <div class="space-y-4">
+        {% for balasan in balasan_list %}
+          <div class="rounded-2xl border p-4" style="border-color: var(--border-soft);">
+            <div class="flex flex-wrap gap-3 text-sm mb-2" style="color: var(--text-muted);">
+              <span>
+                <i class="fa-solid fa-user mr-1"></i>
+                {{ balasan.penulis.username }}
+              </span>
+
+              <span>
+                <i class="fa-solid fa-clock mr-1"></i>
+                {{ balasan.dibuat_pada|timesince }} lalu
+              </span>
+            </div>
+
+            <p style="color: var(--text-main);">
+              {{ balasan.isi }}
+            </p>
           </div>
-          <p
-            class="text-sm leading-relaxed"
-            style="color: var(--text-main); white-space: pre-line"
-          >
-            {{ balasan.isi }}
-          </p>
-        </div>
+        {% endfor %}
       </div>
-    </div>
-    {% endfor %} {% else %}
-    <div class="text-center py-8" style="color: var(--text-muted)">
-      <i class="fa-solid fa-comment-slash text-3xl mb-3 block opacity-30"></i>
-      Belum ada balasan. Jadilah yang pertama!
-    </div>
+    {% else %}
+      <p class="text-sm" style="color: var(--text-muted);">
+        Belum ada balasan. Jadilah yang pertama membalas topik ini.
+      </p>
     {% endif %}
   </div>
 
-  <!-- Form Balas -->
-  {% if request.user.is_authenticated %}
-  <div class="card-soft p-6 fade-up">
-    <h3 class="font-bold mb-4" style="color: var(--text-main)">
-      <i class="fa-solid fa-reply mr-1.5" style="color: var(--sage)"></i>Tulis
-      Balasan
-    </h3>
-    <form method="post" action="{% url 'forum_balas' topik.id %}">
-      {% csrf_token %}
-      <textarea
-        name="isi"
-        rows="4"
-        class="input-soft mb-3"
-        placeholder="Tuliskan balasan Anda yang membangun…"
-        required
-        style="resize: vertical; min-height: 90px"
-      ></textarea>
-      <div class="flex justify-end">
-        <button type="submit" class="btn-primary px-6 py-2.5 text-sm">
-          <i class="fa-solid fa-paper-plane mr-1.5"></i>Kirim Balasan
-        </button>
-      </div>
-    </form>
-  </div>
-  {% else %}
-  <div
-    class="card-soft p-6 text-center fade-up"
-    style="border: 2px dashed var(--border-soft)"
-  >
-    <p class="text-sm mb-3" style="color: var(--text-muted)">
-      Login untuk menulis balasan
-    </p>
-    <a
-      href="{% url 'login_anggota' %}"
-      class="btn-primary inline-flex items-center gap-2 px-6 py-2.5 text-sm"
-    >
-      <i class="fa-solid fa-right-to-bracket"></i> Login Sekarang
-    </a>
-  </div>
-  {% endif %}
+  <div class="card-soft p-6">
+    <h2 class="text-xl font-bold mb-4" style="color: var(--text-main);">
+      Tambah Balasan
+    </h2>
 
-  <!-- Back link -->
-  <div class="mt-5 fade-up">
-    <a
-      href="{% url 'forum' %}"
-      class="flex items-center gap-2 text-sm"
-      style="color: var(--text-muted)"
-    >
-      <i class="fa-solid fa-arrow-left"></i> Kembali ke Forum
-    </a>
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'forum_balas' topik.id %}">
+        {% csrf_token %}
+
+        <textarea
+          name="isi"
+          rows="5"
+          class="input-soft w-full"
+          placeholder="Tulis balasan Anda..."
+          required
+        ></textarea>
+
+        <button type="submit" class="btn-primary mt-4 px-6 py-3">
+          <i class="fa-solid fa-paper-plane mr-2"></i>
+          Kirim Balasan
+        </button>
+      </form>
+    {% else %}
+      <a
+        href="{% url 'login_anggota' %}?next={% url 'forum_detail' topik.id %}"
+        class="btn-primary inline-block px-6 py-3"
+      >
+        Login untuk Membalas
+      </a>
+    {% endif %}
   </div>
+
 </div>
 {% endblock %}
